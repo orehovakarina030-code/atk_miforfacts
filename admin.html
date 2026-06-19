@@ -3,752 +3,344 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Миф / Факт · Игра</title>
+    <title>Админ-панель · Миф / Факт</title>
     <style>
-        /* === ВЕСЬ CSS КАК В ПРЕДЫДУЩЕЙ ВЕРСИИ === */
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
             background: #f0f4fa;
             min-height: 100vh;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
             padding: 20px;
         }
-        .container {
-            max-width: 1000px;
-            width: 100%;
+        .login-box, .admin-container {
             background: white;
-            border-radius: 48px;
-            box-shadow: 0 20px 40px rgba(0, 20, 40, 0.15);
-            padding: 30px 25px 40px;
-        }
-        h1 {
-            font-size: 2rem;
-            font-weight: 700;
-            color: #0b2b44;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 6px;
-            flex-wrap: wrap;
-        }
-        .subhead {
-            color: #3a5a7a;
-            font-weight: 400;
-            font-size: 1rem;
-            border-left: 3px solid #7f9fbf;
-            padding-left: 16px;
-            margin-bottom: 24px;
-            opacity: 0.8;
-        }
-        .setup-area {
-            background: #eef2f7;
+            padding: 40px;
             border-radius: 32px;
-            padding: 25px 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+        }
+        .login-box h2 {
             margin-bottom: 20px;
-            text-align: center;
-        }
-        .setup-area h3 {
-            color: #1f3b54;
-            margin-bottom: 16px;
-            font-weight: 500;
-        }
-        .mode-selector {
-            display: flex;
-            justify-content: center;
-            gap: 14px;
-            flex-wrap: wrap;
-            margin-bottom: 18px;
-        }
-        .mode-btn {
-            padding: 12px 28px;
-            border: 2px solid #cbdae8;
-            border-radius: 60px;
-            background: white;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.15s;
             color: #1f3b54;
         }
-        .mode-btn:hover {
-            transform: scale(1.03);
-            border-color: #3d7ea6;
-        }
-        .mode-btn.active {
-            border-color: #1f3b54;
-            background: #1f3b54;
-            color: white;
-        }
-        .length-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 14px;
-            flex-wrap: wrap;
-            margin-bottom: 18px;
-        }
-        .length-btn {
-            padding: 10px 24px;
-            border: 2px solid #cbdae8;
-            border-radius: 60px;
-            background: white;
-            font-size: 0.95rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.15s;
-            color: #1f3b54;
-        }
-        .length-btn:hover {
-            transform: scale(1.03);
-            border-color: #3d7ea6;
-        }
-        .length-btn.active {
-            border-color: #1f3b54;
-            background: #1f3b54;
-            color: white;
-        }
-        .length-btn .count {
-            font-weight: 400;
-            font-size: 0.8rem;
-            opacity: 0.7;
-        }
-        .team-input-area {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            margin-top: 10px;
-        }
-        .team-input-area input {
-            padding: 10px 20px;
-            border: 2px solid #cbdae8;
-            border-radius: 40px;
-            font-size: 1rem;
-            width: 180px;
-            outline: none;
-            transition: 0.15s;
-        }
-        .team-input-area input:focus {
-            border-color: #3d7ea6;
-        }
-        .btn-start {
-            padding: 10px 32px;
-            background: #1d7a44;
-            color: white;
-            border: none;
-            border-radius: 40px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.15s;
-        }
-        .btn-start:hover {
-            background: #146a38;
-            transform: scale(1.02);
-        }
-        .btn-start:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-            transform: none;
-        }
-        .card-area {
-            background: #eef2f7;
-            border-radius: 32px;
-            padding: 30px 20px 20px;
-            margin: 10px 0 20px;
-            min-height: 250px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-        .card {
-            background: white;
-            border-radius: 28px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+        .login-box input {
             width: 100%;
-            max-width: 700px;
-            padding: 28px 28px 32px;
-            transition: 0.25s ease;
-            border: 1px solid rgba(255,255,255,0.5);
-            text-align: center;
-        }
-        .card.myth {
-            background: #d9e6f2;
-            border-left: 10px solid #3d7ea6;
-        }
-        .card.fact {
-            background: #d4edda;
-            border-left: 10px solid #1d8b4f;
-        }
-        .card-label {
-            display: inline-block;
-            font-weight: 600;
-            font-size: 0.8rem;
-            letter-spacing: 0.8px;
-            background: rgba(0,0,0,0.05);
-            padding: 4px 16px;
-            border-radius: 30px;
-            color: #1f3b54;
-            margin-bottom: 16px;
-            text-transform: uppercase;
-        }
-        .card-text {
-            font-size: 1.25rem;
-            line-height: 1.5;
-            font-weight: 450;
-            color: #0b1f2e;
-            word-break: break-word;
-        }
-        .choices {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 16px 18px;
-            margin: 30px 0 16px;
-        }
-        .choice-btn {
-            border: none;
-            background: white;
-            border-radius: 80px;
-            padding: 14px 34px;
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: #1f3b54;
+            padding: 14px 20px;
             border: 2px solid #cbdae8;
-            cursor: pointer;
-            transition: 0.15s;
-            min-width: 130px;
+            border-radius: 40px;
+            font-size: 1rem;
+            margin-bottom: 16px;
         }
-        .choice-btn:hover:not(:disabled) {
-            transform: scale(1.02);
-            background: #e6f0ff;
-            border-color: #3d7ea6;
-        }
-        .choice-btn:disabled {
-            opacity: 0.45;
-            transform: scale(0.96);
-            pointer-events: none;
-        }
-        .choice-btn.myth-btn {
-            border-color: #6b8baa;
-        }
-        .choice-btn.fact-btn {
-            border-color: #3d9b6a;
-        }
-        .choice-btn.myth-btn:hover:not(:disabled) {
-            background: #d9e6f2;
-            border-color: #2b5a7a;
-        }
-        .choice-btn.fact-btn:hover:not(:disabled) {
-            background: #d4edda;
-            border-color: #1d7a44;
-        }
-        .next-btn-container {
-            display: flex;
-            justify-content: center;
-            margin: 10px 0 5px;
-        }
-        .next-btn {
-            padding: 12px 40px;
+        .login-box button {
+            width: 100%;
+            padding: 14px;
             background: #2b5a7a;
             color: white;
             border: none;
-            border-radius: 60px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.15s;
-        }
-        .next-btn:hover:not(:disabled) {
-            background: #1f4b6e;
-            transform: scale(1.02);
-        }
-        .next-btn:disabled {
-            opacity: 0.3;
-            cursor: not-allowed;
-            transform: none;
-        }
-        .info-panel {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: space-between;
-            margin: 20px 0 10px;
-            gap: 12px;
-            background: #f0f5fe;
-            padding: 12px 20px;
-            border-radius: 60px;
-        }
-        .progress {
-            font-weight: 500;
-            color: #1c3d5e;
-        }
-        .progress span {
-            background: #cbdae8;
-            padding: 2px 14px;
-            border-radius: 50px;
-            margin: 0 4px;
-        }
-        .reset-btn {
-            background: transparent;
-            border: 1px solid #8aaac9;
             border-radius: 40px;
-            padding: 8px 24px;
-            font-weight: 500;
-            color: #1f3b54;
-            cursor: pointer;
-            transition: 0.1s;
-            font-size: 0.9rem;
-        }
-        .reset-btn:hover {
-            background: #1f3b54;
-            color: white;
-            border-color: #1f3b54;
-        }
-        .feedback {
-            margin: 12px 0 0;
             font-size: 1rem;
-            min-height: 2.2rem;
-            font-weight: 450;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-        .hidden {
-            display: block !important;
-        }
-        .game-over-msg {
-            font-size: 1.3rem;
             font-weight: 600;
+            cursor: pointer;
+        }
+        .login-box button:hover { background: #1f4b6e; }
+        .error { color: #c0392b; margin-top: 10px; }
+        .hidden { display: none !important; }
+
+        .admin-container {
+            text-align: left;
+        }
+        .admin-container h2 {
             color: #1f3b54;
+            margin-bottom: 20px;
             text-align: center;
-            padding: 10px;
         }
-        .turn-indicator {
-            font-weight: 600;
-            font-size: 1.1rem;
-            color: #1f3b54;
-            padding: 4px 16px;
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+        }
+        .admin-table th {
+            text-align: left;
+            padding: 8px 12px;
             background: #eef2f7;
-            border-radius: 30px;
+            border-radius: 12px;
+            font-weight: 600;
+            color: #1f3b54;
+        }
+        .admin-table td {
+            padding: 8px 12px;
+            border-bottom: 1px solid #eef2f7;
+        }
+        .admin-table .errors { font-weight: 700; color: #c0392b; }
+        .admin-table .correct { font-weight: 700; color: #1d7a44; }
+        .download-btn {
+            margin-top: 16px;
+            padding: 10px 24px;
+            background: #2b5a7a;
+            color: white;
+            border: none;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .download-btn:hover { background: #1f4b6e; }
+        .clear-btn {
+            margin-left: 10px;
+            padding: 10px 24px;
+            background: #c0392b;
+            color: white;
+            border: none;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .clear-btn:hover { background: #a93226; }
+        .stats-info {
+            margin: 12px 0;
+            padding: 12px;
+            background: #eef2f7;
+            border-radius: 16px;
+            font-size: 0.9rem;
+            color: #1f3b54;
+        }
+        .back-link {
             display: inline-block;
+            margin-top: 16px;
+            color: #2b5a7a;
+            text-decoration: none;
         }
-        /* Админ-панель СКРЫТА в общедоступной версии */
-        .admin-panel {
-            display: none !important;
-        }
-        @media (max-width: 550px) {
-            .container { padding: 18px; }
-            .card-text { font-size: 1.05rem; }
-            .choice-btn { padding: 12px 18px; min-width: 100px; font-size: 1rem; }
-            .choices { gap: 10px; }
-            h1 { font-size: 1.6rem; }
-            .length-btn, .mode-btn { padding: 10px 16px; font-size: 0.85rem; }
-            .team-input-area input { width: 130px; }
-            .next-btn { padding: 10px 30px; font-size: 1rem; }
-        }
+        .back-link:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
-<div class="container" id="app">
-    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
-        <h1>🧩 Миф · Факт</h1>
-        <span style="background: #dbe4ee; padding: 4px 20px; border-radius: 40px; font-weight: 500; color: #1f3b54; font-size: 0.9rem;">12–14 лет</span>
-    </div>
-    <div class="subhead">Выберите режим, длину игры и начните!</div>
 
-    <!-- НАСТРОЙКА -->
-    <div class="setup-area" id="setupArea">
-        <h3>🎮 Выберите режим игры</h3>
-        <div class="mode-selector">
-            <button class="mode-btn active" data-mode="solo">Один игрок</button>
-            <button class="mode-btn" data-mode="teams">Две команды</button>
-        </div>
+<!-- Форма входа -->
+<div id="loginForm" class="login-box">
+    <h2>🔒 Админ-панель</h2>
+    <p style="color: #7f8c8d; margin-bottom: 20px;">Введите пароль для доступа к статистике</p>
+    <input type="password" id="passwordInput" placeholder="Введите пароль" onkeydown="if(event.key==='Enter') checkPassword()">
+    <button onclick="checkPassword()">Войти</button>
+    <div id="loginError" class="error"></div>
+</div>
 
-        <h3>📏 Выберите длину игры</h3>
-        <div class="length-buttons">
-            <button class="length-btn" data-count="22">Короткая <span class="count">(22 карточки)</span></button>
-            <button class="length-btn active" data-count="44">Средняя <span class="count">(44 карточки)</span></button>
-            <button class="length-btn" data-count="66">Длинная <span class="count">(66 карточек)</span></button>
-        </div>
+<!-- Админ-контент (скрыт до входа) -->
+<div id="adminContent" class="admin-container hidden">
+    <h2>📊 Статистика игры «Миф / Факт»</h2>
 
-        <div class="team-input-area" id="teamInputArea">
-            <input type="text" id="team1Input" placeholder="Название команды 1" value="Команда 1">
-            <input type="text" id="team2Input" placeholder="Название команды 2" value="Команда 2">
-            <button class="btn-start" id="startGameBtn">Начать игру</button>
-        </div>
-        <div style="margin-top: 12px; font-size: 0.9rem; color: #4d6a87;" id="modeDisplay">Режим: <strong>Один игрок</strong></div>
+    <div class="stats-info" id="statsInfo">
+        Данные загружаются...
     </div>
 
-    <!-- ИГРОВАЯ ОБЛАСТЬ -->
-    <div id="gameArea" class="hidden">
-        <div style="text-align: center; margin-bottom: 12px;">
-            <span class="turn-indicator" id="turnIndicator">Ход: Команда 1</span>
-        </div>
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>Команда / Игрок</th>
+                <th>✅ Правильно</th>
+                <th>❌ Ошибки</th>
+                <th>📊 Всего</th>
+                <th>🎯 %</th>
+            </tr>
+        </thead>
+        <tbody id="adminBody">
+            <tr><td colspan="5" style="text-align:center; color:#8aaac9;">Нет данных</td></tr>
+        </tbody>
+    </table>
 
-        <div class="card-area">
-            <div class="card" id="cardDisplay">
-                <div class="card-label" id="cardLabel">МИФ</div>
-                <div class="card-text" id="cardText">Загружаем...</div>
-            </div>
-        </div>
-
-        <div class="choices">
-            <button class="choice-btn myth-btn" id="mythBtn">Миф</button>
-            <button class="choice-btn fact-btn" id="factBtn">Факт</button>
-        </div>
-
-        <div class="next-btn-container">
-            <button class="next-btn" id="nextBtn" disabled>Далее →</button>
-        </div>
-
-        <div class="info-panel">
-            <div class="progress">🗂️ <span id="currentIndexDisplay">1</span> / <span id="totalCardsDisplay">0</span></div>
-            <button class="reset-btn" id="resetBtn">⟳ В начало</button>
-        </div>
-
-        <div class="feedback" id="feedbackMessage">
-            <span>Нажмите «Миф» или «Факт»</span>
-        </div>
+    <h3 style="margin-top: 24px; font-size: 1rem; color: #1f3b54;">📝 Детальный лог ответов</h3>
+    <div style="max-height: 300px; overflow-y: auto; border: 1px solid #eef2f7; border-radius: 16px; padding: 8px; margin-top: 8px;">
+        <table class="admin-table" id="logTable">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Команда</th>
+                    <th>Утверждение</th>
+                    <th>Тип</th>
+                    <th>Выбор</th>
+                    <th>Результат</th>
+                </tr>
+            </thead>
+            <tbody id="logBody">
+                <tr><td colspan="6" style="text-align:center; color:#8aaac9;">Нет данных</td></tr>
+            </tbody>
+        </table>
     </div>
 
-    <!-- АДМИН-ПАНЕЛЬ СКРЫТА в этой версии -->
-    <div class="admin-panel" id="adminPanel"></div>
+    <div style="margin-top: 16px; display: flex; flex-wrap: wrap; gap: 10px;">
+        <button class="download-btn" id="downloadStatsBtn">📥 Скачать статистику (CSV)</button>
+        <button class="clear-btn" id="clearStatsBtn">🗑️ Очистить статистику</button>
+    </div>
+
+    <a href="./" class="back-link">← Вернуться к игре</a>
 </div>
 
 <script>
     // ============================================================
-    // ДАННЫЕ: 66 пар (миф + факт)
+    // ПАРОЛЬ (можно изменить)
     // ============================================================
-    const ALL_PAIRS = [
-        { myth: "Уголовный жаргон — это признак причастности к крутому кругу лиц, его знают не все", fact: "Уголовный жаргон — это маркер необразованности. Люди с высшим образованием и уважением в обществе не используют блатной язык." },
-        { myth: "До 14 лет ничего не будет, это будет считаться шалостью", fact: "До 14 лет ставят на учёт в ПДН, вызывают на комиссию, отправляют в спецшколу. Это портит репутацию." },
-        { myth: "Все популярные люди хулиганили в школе", fact: "99% популярных и успешных людей в школе учились и вели себя прилично. Если кто-то и хулиганил — он об этом жалеет." },
-        { myth: "Все преступники очень храбрые", fact: "Храбрость — это идти на риск ради других. Преступники рискуют чужой жизнью и свободой. Это безответственность." },
-        { myth: "В интернете под чужим именем меня никто не найдет", fact: "IP-адрес, номер телефона, геолокация — всё фиксируется. Полиция находит авторов угроз и оскорблений за 1–2 дня." },
-        { myth: "Если разбить окно, то это просто шалость, если никто не заметит", fact: "За разбитое окно школа платит из бюджета — эти деньги могли пойти на новые компьютеры. А уборщица может порезаться. И камеры вас видят." },
-        { myth: "Меня никогда не поймают и ничего не заметят, я всё сделаю чисто", fact: "В 90% краж в школах и магазинах находят по камерам в течение 48 часов. Камеры есть везде. Ты невидимка только в своих мыслях." },
-        { myth: "Если постоять рядом «на шухере», то ничего не будет", fact: "Соучастие в преступлении — это тоже преступление. Ты отвечаешь наравне с тем, кто бьёт или крадёт. «Я просто стоял» в суде не работает." },
-        { myth: "Нужно наказывать непохожих на меня", fact: "Никто не имеет права наказывать другого человека. Это называется самосуд — и это уголовное преступление по статье побои или умышленное причинение вреда здоровью." },
-        { myth: "Выложу фото с «пацанским» жестом по приколу", fact: "Фото с запрещёнными жестами или символикой может быть признано экстремизмом." },
-        { myth: "Наушники можно украсть, никто же не заметит", fact: "За кражу наушников (даже дешёвых) — штраф или исправительные работы. А хозяин мог копить на них месяцами." },
-        { myth: "Настоящий срок могут дать только за убийство", fact: "За кражу, грабёж, разбой могут дать несколько лет. И это реальный срок в колонии, а не «условно»." },
-        { myth: "Я буду молчать, если меня поймают, тогда точно ничего не будет", fact: "Молчание не освобождает от ответственности. Камеры, отпечатки пальцев, свидетели — всё говорит за тебя. А запирательство только ухудшает положение." },
-        { myth: "«Лайк» под постом — это просто поддержка", fact: "«Лайк» под видео с дракой или кражей — это публичное одобрение преступления. Согласно закону, это может быть расценено как оправдание преступных действий." },
-        { myth: "В интернете можно шутить друг с другом над кем-то, это же просто интернет", fact: "Травля в интернете (кибербуллинг) — это уголовное преследование по статье «клевета». Шутки в интернете имеют реальные последствия." },
-        { myth: "Издеваться над «не такими» это справедливо", fact: "Никто не решает, кто «правильный», а кто «нет». У каждого есть чувства. Того, кого ты обидел, могут бояться выходить на улицу. Он может бросить школу из-за буллинга." },
-        { myth: "Меня вытащат, у меня есть «связи»", fact: "«Связи» не работают против закона. Особенно если преступление серьёзное. Родители могут нанять адвоката, но это не отменяет судимость. И адвокат стоит больших денег." },
-        { myth: "Быть смелым и иногда хулиганить — привлекательно", fact: "Быть смелым — это защищать других. А хулиганить — это причинять вред. Привлекательно быть добрым, надёжным, умным. А не тем, кто ломает жизнь себе и другим." },
-        { myth: "Если откажусь, то меня не станут уважать", fact: "Уважение заслуживают поступки, а не подчинение. Человек, который умеет сказать «нет», вызывает больше уважения, чем тот, кто всегда соглашается." },
-        { myth: "Учиться в школе необязательно, потому что добиться успеха можно другими путями", fact: "Без аттестата нельзя поступить в колледж или на работу. Даже курьером не возьмут без документа об образовании. Школа — это база для любой профессии." },
-        { myth: "Украсть в магазине — это интересный квест", fact: "Это не квест. Это уголовное преступление по статье «кража»." },
-        { myth: "Срок в тюрьме — это пауза, после неё можно начать все сначала", fact: "После тюрьмы нельзя работать в госструктурах, банках, школах, авиации, полиции. 70% работодателей отказывают в работе из-за судимости. Это не пауза — это крест на карьере." },
-        { myth: "Отвечать ударом на удар правильно", fact: "Ответный удар — это драка, за которую ставят на учёт и могут посадить. А уйти, позвать взрослых или решить словами — это выбор сильного человека." },
-        { myth: "Родители меня не поймут, если я расскажу о том, что происходит в нашей компании", fact: "Родители могут не понять с первого раза, но они хотят защитить тебя. Хуже, когда ты остаёшься один с проблемой, которая становится всё больше. Они — твоя страховка." },
-        { myth: "Богатые люди тоже воровали и добились успеха", fact: "99% богатых людей заработали честным трудом, талантом или наследством. Те, кто воровал, сидят или потеряли всё. Воровство — не дорога к успеху." },
-        { myth: "Если я хочу, то заберу то, что хочу у тех, кому просто так досталось", fact: "Никто никому ничего не должен. То, что у другого есть — это результат работы его родителей или его самого. Ты не имеешь права забирать чужое." },
-        { myth: "Мне недодали того, что я хочу, значит я могу забрать у тех, кому просто так досталось", fact: "Чувство обиды не даёт права на кражу. Если тебе чего-то не хватает — иди работай, учись, зарабатывай. Кража — это не решение, это преступление." },
-        { myth: "Семья меня не бросит и не перестанет любить, если я сяду в тюрьму", fact: "Тюрьма разрушает семьи. Родители седеют, платят адвокатам, теряют деньги и здоровье. Иногда семьи распадаются. Не проверяй их любовь на прочность." },
-        { myth: "После «шалостей» в школе я всё равно вырасту другим человеком", fact: "Ты можешь вырасти, но судимость и репутация останутся. База МВД — на 30 лет. Школа запомнит, а рекомендации учителей будут в твоём деле." },
-        { myth: "Татуировки делают меня круче и вызывают авторитет", fact: "В тюрьме татуировки набивают принудительно. На воле тату — это просто рисунок. И если ты набил в 14 лет, в 20 лет он растянется и станет некрасивым. Авторитет — не в тату." },
-        { myth: "Только по-настоящему взрослые могут курить", fact: "Курящий подросток выглядит глупо, а не взросло. Запах, кашель, жёлтые зубы, зависимость — это не про крутость. Это про слабость и проблемы с лёгкими в 30 лет." },
-        { myth: "Синяки и шрамы украшают", fact: "Синяки и шрамы — это боль, риск заражения, травмы. В 14 лет организм восстанавливается, а в 40 лет эти же травмы дают о себе знать. Хочешь быть больным в 40 лет?" },
-        { myth: "Они поддерживают меня в пацанских вещах, они настоящие друзья", fact: "Настоящие друзья поддержат тебя в учёбе, в спорте, в трудной ситуации. А не в том, чтобы сломать жизнь. Если они зовут нарушать — они хотят, чтобы ты сел, а не они." },
-        { myth: "Мнение родителей и учителей вообще не имеет смысла", fact: "Взрослые дают характеристики, рекомендации для учёбы и работы. От их мнения зависит, возьмут ли тебя в колледж или на работу." },
-        { myth: "Только с настоящими друзьями можно испытать вкус риска", fact: "Настоящие друзья не толкают тебя на риск. Они уважают твой выбор и не просят нарушать закон. Тот, кто просит рисковать — использует тебя." },
-        { myth: "Реально крутые ребята берут и делают, а не думают о последствиях", fact: "Реально крутые ребята ДУМАЮТ. Потому что они не хотят потерять свободу, семью и будущее." },
-        { myth: "Они считают меня особенным, значит им я нужен, надо к ним прислушиваться", fact: "Фраза \"ты особенный\" — это классическая манипуляция. Так говорят, чтобы ты сделал то, что нужно другому. Если бы ты был особенным — тебя бы не просили рисковать." },
-        { myth: "Гнев придает сил", fact: "Гнев делает тебя предсказуемым и слабым. Тобой легко управлять, когда ты злишься. Сила — когда ты спокоен, но твёрд." },
-        { myth: "Признавать страх = быть слабым", fact: "Признать страх — это честно. Слабость — делать глупости, чтобы его заглушить. Страх — это защит. Если ты не боишься, ты не думаешь о последствиях." },
-        { myth: "Все пацаны должны уметь драться", fact: "Пацан должен уметь защищать. А защищать можно словами, делами, поступками. Драка — крайность, когда всё остальное не помогло. Если ты всегда дерёшься — ты не умеешь договариваться." },
-        { myth: "Несовершеннолетним судимость «погасят»", fact: "Погашение происходит только через 3–10 лет после отбытия срока. И судимость ВИДНА при поступлении на госслужбу, в полицию, банки, при получении визы." },
-        { myth: "Учёт в ПДН ни на что не влияет", fact: "Учёт в ПДН виден при поступлении в военные училища, академии МВД, некоторые колледжи. И это закрывает возможность путешествовать за границу." },
-        { myth: "Мой учёт в ПДН быстро забудут", fact: "База МВД хранит данные 30 лет. При любом запросе из полиции твоё имя всплывает. Даже через 10 лет." },
-        { myth: "Моего знакомого в тюрьме все уважали, поэтому сидеть не страшно", fact: "В тюрьме уважают только внутри тюрьмы. Снаружи — страх, жалость и отторжение. Он потерял работу, девушку, квартиру. Уважение за решёткой не стоит свободы." },
-        { myth: "Мой ровесник ведёт себя дерзко и все его уважают", fact: "Через 2 года его могут посадить. Он выйдет без профессии, с проблемным здоровьем. А те, кто его уважал — уйдут в другую компанию." },
-        { myth: "Успешные люди ведут себя жёстко, надо делать также", fact: "Жёсткость — это не успех. Успешные люди умеют договариваться. Они не тратят энергию на конфликты, они тратят её на учёбу и развитие." },
-        { myth: "Спортсменов никто не уважает, их считают скучными — они же только тренируются", fact: "Спортсмены дисциплинированы. Они добиваются успеха, получают медали, признание, любовь болельщиков. Хулиганов не любят даже их друзья через год." },
-        { myth: "Всё что я писал — я могу просто удалить и никто не увидит", fact: "Скриншоты делаются за секунды. Даже если ты удалил сообщение, у собеседника есть его копия. И правоохранители восстанавливают удалённое." },
-        { myth: "Стримы с «запрещёнкой» всем нравятся", fact: "Видео с драками, кражами, унижением — это контент, который блокируется Роскомнадзором. Автора вычисляют и привлекают к ответственности. Блогером с такой репутацией не стать — аккаунт забанят." },
-        { myth: "С фейка можно троллить всех", fact: "Создание фейка не скрывает твой реальный IP. Твои родители получат штраф за твои действия. Вплоть до реального срока за экстремизм или угрозы." },
-        { myth: "В фильмах преступники всегда сухие из воды выходят, это же не просто так", fact: "В кино — сценарий. В жизни — судимость, потеря работы и семьи. Кино делает круто, а жизнь — нет. Фильмы — это бизнес, не руководство к действию." },
-        { myth: "Воровство помогает быстро разбогатеть", fact: "Воровство помогает быстро сесть. Настоящие деньги зарабатывают годами. Разбогатеть можно спортом, бизнесом, учёбой. Но не кражей." },
-        { myth: "Я найму адвоката и он все решит", fact: "Адвокат может смягчить приговор, но не отменить его. Если преступление доказано — судимость останется. И даже адвокат не вернёт тебе годы свободы." },
-        { myth: "В тюрьме всё бесплатно", fact: "В тюрьме кормят баландой, лечат по минимуму, живут в камере с чужими людьми. Ты теряешь свободу, семью, друзей, будущее. Это самая дорогая \"бесплатность\"." },
-        { myth: "Смешными фотографиями одноклассников можно делиться хоть с кем, это ведь смешно", fact: "Фотография человека без его согласия — это нарушение личных границ. Это унижение. За это можно получить иск и уголовное дело по статье 137 УК РФ." },
-        { myth: "Я могу продать свою банковскую карту и быстро заработать на этом, а потом просто завести новую", fact: "Карта привязана к твоему имени. Её используют мошенники. За всё, что сделают с твоей карты, будут судить ТЕБЯ. Статья 187 УК РФ — до 6 лет." },
-        { myth: "Они обещают меня прикрыть «на деле», значит им можно доверять", fact: "Тот, кто обещает прикрыть, в суде говорит: \"Я ничего не знал\". Ты остаёшься один. Он на свободе, ты — в тюрьме. Доверие проверяется не словами, а поступками." },
-        { myth: "Со мной не случатся такие проблемы", fact: "Так думает каждый, кто попадает в тюрьму. Никто не планирует сесть. Это происходит случайно, из-за одного \"слабо\"." },
-        { myth: "Иногда надо хулиганить ради адреналина", fact: "Адреналин можно получить спортом, музыкой, танцами. Преступление даёт ложный адреналин, за которым идёт страх и тюрьма." },
-        { myth: "Надо жить здесь и сейчас, последствий может и не быть", fact: "Последствия есть всегда. Просто ты их не видишь сразу. Они приходят через день, месяц, год. Жить \"здесь и сейчас\" — значит не думать о завтра. А завтра наступит." },
-        { myth: "Я везучий и меня не поймают", fact: "На 10 правонарушений — 9 раскрытий. Статистика не в твою пользу. Удача — плохой план." },
-        { myth: "Если я скажу друзьям «нет», то я испорчу с ними отношения", fact: "Отношения, которые держатся на твоих уступках — не настоящие. Настоящие выдерживают «нет». А если не выдерживают — это не друзья." },
-        { myth: "Можно уехать в другую страну или в другой город и начать всё заново", fact: "Визу в другую страну не дадут с судимостью. В другом городе тоже есть база данных. Ты навсегда остаёшься с этим \"багажом\". Сбежать нельзя." },
-        { myth: "Нужно думать только о себе и жить ради себя, остальным всё равно", fact: "Думать о себе — нормально. Но если ты думаешь только о себе — ты теряешь связь с теми, кто тебя любит. И остаёшься один. А одиночество — это страшно." }
-    ];
-
-    // ============================================================
-    // СОСТОЯНИЕ ИГРЫ
-    // ============================================================
-    let state = {
-        mode: 'solo',
-        teams: ['Команда 1', 'Команда 2'],
-        selectedLength: 44,
-        currentTeamIndex: 0,
-        cards: [],
-        currentCardIndex: 0,
-        isAnswered: false,
-        gameStarted: false,
-        scores: {},
-        gameLog: [],
-        waitingForNext: false
-    };
-
-    // DOM
-    const setupArea = document.getElementById('setupArea');
-    const gameArea = document.getElementById('gameArea');
-    const cardDisplay = document.getElementById('cardDisplay');
-    const cardLabel = document.getElementById('cardLabel');
-    const cardText = document.getElementById('cardText');
-    const mythBtn = document.getElementById('mythBtn');
-    const factBtn = document.getElementById('factBtn');
-    const nextBtn = document.getElementById('nextBtn');
-    const resetBtn = document.getElementById('resetBtn');
-    const currentIndexSpan = document.getElementById('currentIndexDisplay');
-    const totalCardsSpan = document.getElementById('totalCardsDisplay');
-    const turnIndicator = document.getElementById('turnIndicator');
-    const feedbackDiv = document.getElementById('feedbackMessage');
-    const team1Input = document.getElementById('team1Input');
-    const team2Input = document.getElementById('team2Input');
-    const startGameBtn = document.getElementById('startGameBtn');
-    const modeDisplay = document.getElementById('modeDisplay');
-
-    // Кнопки режимов и длины
-    const modeBtns = document.querySelectorAll('.mode-btn');
-    const lengthBtns = document.querySelectorAll('.length-btn');
+    const ADMIN_PASSWORD = 'maxim26';
 
     // ============================================================
     // ФУНКЦИИ
     // ============================================================
 
-    function shuffleArray(arr) {
-        for (let i = arr.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [arr[i], arr[j]] = [arr[j], arr[i]];
-        }
-        return arr;
-    }
-
-    function getCards(count) {
-        const shuffled = shuffleArray([...ALL_PAIRS]);
-        return shuffled.slice(0, count);
-    }
-
-    function initScores() {
-        state.scores = {};
-        state.teams.forEach(team => {
-            state.scores[team] = { correct: 0, errors: 0, total: 0 };
-        });
-        state.gameLog = [];
-    }
-
-    function showCard(index) {
-        const card = state.cards[index];
-        if (!card) return;
-        cardDisplay.className = 'card myth';
-        cardLabel.innerHTML = 'МИФ';
-        cardLabel.style.color = '#1f4b6e';
-        cardText.innerHTML = card.myth;
-        currentIndexSpan.textContent = index + 1;
-        totalCardsSpan.textContent = state.cards.length;
-        const team = state.teams[state.currentTeamIndex];
-        turnIndicator.textContent = `Ход: ${team}`;
-        state.isAnswered = false;
-        state.waitingForNext = false;
-        mythBtn.disabled = false;
-        factBtn.disabled = false;
-        nextBtn.disabled = true;
-        feedbackDiv.innerHTML = `<span>${team}, что думаете? Миф или факт?</span>`;
-    }
-
-    function nextTeam() {
-        if (state.mode === 'teams') {
-            state.currentTeamIndex = (state.currentTeamIndex + 1) % state.teams.length;
-        }
-    }
-
-    function goToNextCard() {
-        if (state.currentCardIndex + 1 < state.cards.length) {
-            state.currentCardIndex++;
-            nextTeam();
-            showCard(state.currentCardIndex);
+    function checkPassword() {
+        const password = document.getElementById('passwordInput').value;
+        if (password === ADMIN_PASSWORD) {
+            document.getElementById('loginForm').classList.add('hidden');
+            document.getElementById('adminContent').classList.remove('hidden');
+            loadAndDisplayStats();
         } else {
-            feedbackDiv.innerHTML = `<span class="game-over-msg">Игра завершена! Нажмите «В начало».</span>`;
-            mythBtn.disabled = true;
-            factBtn.disabled = true;
-            nextBtn.disabled = true;
-            turnIndicator.textContent = 'Игра окончена';
+            document.getElementById('loginError').textContent = '❌ Неверный пароль!';
+            document.getElementById('passwordInput').value = '';
         }
     }
 
-    function handleChoice(choice) {
-        if (state.isAnswered || !state.gameStarted) return;
-        const card = state.cards[state.currentCardIndex];
-        if (!card) return;
-
-        const isCorrect = (choice === 'myth');
-        const team = state.teams[state.currentTeamIndex];
-        const s = state.scores[team] || { correct: 0, errors: 0, total: 0 };
-
-        state.gameLog.push({
-            team: team,
-            cardIndex: state.currentCardIndex,
-            myth: card.myth,
-            fact: card.fact,
-            choice: choice,
-            isCorrect: isCorrect
-        });
-
-        if (isCorrect) {
-            s.correct++;
-            feedbackDiv.innerHTML = `<span>Верно! Это действительно МИФ. Вот факт:</span>`;
-        } else {
-            s.errors++;
-            feedbackDiv.innerHTML = `<span>Не угадал! Это был МИФ. Вот настоящий факт:</span>`;
-        }
-        s.total++;
-        state.scores[team] = s;
-
-        // Показываем факт
-        cardDisplay.className = 'card fact';
-        cardLabel.innerHTML = 'ФАКТ';
-        cardLabel.style.color = '#0f5c2e';
-        cardText.innerHTML = card.fact;
-
-        state.isAnswered = true;
-        state.waitingForNext = true;
-        mythBtn.disabled = true;
-        factBtn.disabled = true;
-        nextBtn.disabled = false;
-    }
-
-    function startGame() {
-        const team1 = team1Input.value.trim() || 'Команда 1';
-        const team2 = team2Input.value.trim() || 'Команда 2';
-
-        if (state.mode === 'solo') {
-            state.teams = [team1];
-        } else {
-            state.teams = [team1, team2];
+    function loadAndDisplayStats() {
+        const saved = localStorage.getItem('mifFaktStats');
+        if (!saved) {
+            document.getElementById('statsInfo').innerHTML = '📭 Статистика пока не сохранена. Сыграйте хотя бы одну игру.';
+            document.getElementById('adminBody').innerHTML =
+                `<tr><td colspan="5" style="text-align:center; color:#8aaac9;">Нет данных</td></tr>`;
+            document.getElementById('logBody').innerHTML =
+                `<tr><td colspan="6" style="text-align:center; color:#8aaac9;">Нет данных</td></tr>`;
+            return;
         }
 
-        state.cards = getCards(state.selectedLength);
-        state.currentCardIndex = 0;
-        state.currentTeamIndex = 0;
-        state.gameStarted = true;
-        initScores();
+        try {
+            const data = JSON.parse(saved);
+            const scores = data.scores || {};
+            const log = data.log || [];
+            const teams = data.teams || ['Команда 1', 'Команда 2'];
+            const seed = data.seed || '—';
+            const date = data.date ? new Date(data.date).toLocaleString() : '—';
 
-        setupArea.classList.add('hidden');
-        gameArea.classList.remove('hidden');
+            // Информация
+            document.getElementById('statsInfo').innerHTML = `
+                🗓️ Дата: ${date}<br>
+                🔢 Seed: ${seed}<br>
+                👥 Команды: ${teams.join(', ')}<br>
+                📝 Всего ответов: ${log.length}
+            `;
 
-        showCard(0);
+            // Таблица результатов
+            let html = '';
+            teams.forEach(team => {
+                const s = scores[team] || { correct: 0, errors: 0, total: 0 };
+                const pct = s.total > 0 ? Math.round((s.correct / s.total) * 100) : 0;
+                html += `
+                    <tr>
+                        <td><strong>${team}</strong></td>
+                        <td class="correct">${s.correct}</td>
+                        <td class="errors">${s.errors}</td>
+                        <td>${s.total}</td>
+                        <td>${pct}%</td>
+                    </tr>
+                `;
+            });
+            if (!html) {
+                html = `<tr><td colspan="5" style="text-align:center; color:#8aaac9;">Нет данных</td></tr>`;
+            }
+            document.getElementById('adminBody').innerHTML = html;
+
+            // Лог ответов
+            let logHtml = '';
+            log.forEach((item, index) => {
+                const resultText = item.isCorrect ? '✅ Верно' : '❌ Ошибка';
+                const typeLabel = item.type === 'myth' ? 'Миф' : 'Факт';
+                const choiceLabel = item.choice === 'myth' ? 'Миф' : 'Факт';
+                logHtml += `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${item.team || '—'}</td>
+                        <td style="max-width:200px; word-break:break-word;">${item.statement || '—'}</td>
+                        <td>${typeLabel}</td>
+                        <td>${choiceLabel}</td>
+                        <td>${resultText}</td>
+                    </tr>
+                `;
+            });
+            if (!logHtml) {
+                logHtml = `<tr><td colspan="6" style="text-align:center; color:#8aaac9;">Нет данных</td></tr>`;
+            }
+            document.getElementById('logBody').innerHTML = logHtml;
+
+        } catch(e) {
+            document.getElementById('statsInfo').innerHTML = '⚠️ Ошибка загрузки данных';
+        }
     }
 
-    function resetGame() {
-        state.gameStarted = false;
-        setupArea.classList.remove('hidden');
-        gameArea.classList.add('hidden');
-        state.currentCardIndex = 0;
-        state.currentTeamIndex = 0;
-        state.isAnswered = false;
-        state.waitingForNext = false;
-        state.scores = {};
-        state.gameLog = [];
-        feedbackDiv.innerHTML = `<span>Нажмите «Миф» или «Факт»</span>`;
-        turnIndicator.textContent = 'Ход: ---';
-        nextBtn.disabled = true;
+    function downloadCSV() {
+        const saved = localStorage.getItem('mifFaktStats');
+        if (!saved) {
+            alert('Нет данных для скачивания.');
+            return;
+        }
+
+        try {
+            const data = JSON.parse(saved);
+            const scores = data.scores || {};
+            const log = data.log || [];
+            const teams = data.teams || ['Команда 1', 'Команда 2'];
+            const date = data.date || new Date().toISOString();
+
+            let csv = 'Итоговая статистика:\n';
+            csv += 'Команда,Правильно,Ошибки,Всего,%\n';
+            teams.forEach(team => {
+                const s = scores[team] || { correct: 0, errors: 0, total: 0 };
+                const pct = s.total > 0 ? Math.round((s.correct / s.total) * 100) : 0;
+                csv += `"${team}",${s.correct},${s.errors},${s.total},${pct}%\n`;
+            });
+
+            csv += '\nДетальный лог:\n';
+            csv += '№,Команда,Утверждение,Тип,Выбор,Результат\n';
+            log.forEach((item, index) => {
+                const resultText = item.isCorrect ? 'Верно' : 'Ошибка';
+                const typeLabel = item.type === 'myth' ? 'Миф' : 'Факт';
+                const choiceLabel = item.choice === 'myth' ? 'Миф' : 'Факт';
+                const statement = (item.statement || '—').replace(/"/g, '""');
+                csv += `${index + 1},"${item.team || '—'}","${statement}","${typeLabel}","${choiceLabel}","${resultText}"\n`;
+            });
+
+            csv += `\nДата: ${new Date(date).toLocaleString()}\n`;
+            csv += `Seed: ${data.seed || '—'}\n`;
+
+            const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            const dateStr = new Date().toISOString().slice(0, 19).replace(/[:-]/g, '');
+            link.download = `statistika_mif_fakt_${dateStr}.csv`;
+            link.click();
+            URL.revokeObjectURL(link.href);
+
+        } catch(e) {
+            alert('Ошибка при создании CSV: ' + e.message);
+        }
+    }
+
+    function clearStats() {
+        if (confirm('Вы уверены, что хотите очистить всю статистику?')) {
+            localStorage.removeItem('mifFaktStats');
+            loadAndDisplayStats();
+            alert('Статистика очищена.');
+        }
     }
 
     // ============================================================
     // ОБРАБОТЧИКИ
     // ============================================================
 
-    modeBtns.forEach(btn => {
-        btn.addEventListener('click', function() {
-            modeBtns.forEach(b => b.classList.remove('active'));
-            this.classList.add('active');
-            state.mode = this.dataset.mode;
-            modeDisplay.textContent = `Режим: ${state.mode === 'solo' ? 'Один игрок' : 'Две команды'}`;
-            const team2Input = document.getElementById('team2Input');
-            if (state.mode === 'solo') {
-                team2Input.style.display = 'none';
-            } else {
-                team2Input.style.display = 'inline-block';
-            }
-        });
-    });
-    document.getElementById('team2Input').style.display = 'none';
+    document.getElementById('downloadStatsBtn').addEventListener('click', downloadCSV);
+    document.getElementById('clearStatsBtn').addEventListener('click', clearStats);
 
-    lengthBtns.forEach(btn => {
-        btn.addEventListener('click', function() {
-            lengthBtns.forEach(b => b.classList.remove('active'));
-            this.classList.add('active');
-            state.selectedLength = parseInt(this.dataset.count);
-        });
-    });
-
-    startGameBtn.addEventListener('click', startGame);
-    mythBtn.addEventListener('click', function() { handleChoice('myth'); });
-    factBtn.addEventListener('click', function() { handleChoice('fact'); });
-    nextBtn.addEventListener('click', goToNextCard);
-    resetBtn.addEventListener('click', resetGame);
-
-    document.addEventListener('keydown', (e) => {
-        if (e.key === '1') { if (!mythBtn.disabled) mythBtn.click(); }
-        else if (e.key === '2') { if (!factBtn.disabled) factBtn.click(); }
-        else if (e.key === 'Enter' || e.key === ' ') {
-            if (!nextBtn.disabled) {
-                e.preventDefault();
-                nextBtn.click();
-            }
-        }
-    });
+    // Проверяем, есть ли уже статистика при загрузке (если пароль уже введён)
+    // Но пароль вводится вручную
 </script>
-  <!-- АДМИН-ПАНЕЛЬ (видна только в admin.html) -->
-<div class="admin-panel" id="adminPanel">
-    <h3>📊 Статистика игры</h3>
-    <table class="admin-table" id="adminTable">
-        <thead>
-            <tr>
-                <th>Команда / Игрок</th>
-                <th>Правильно</th>
-                <th>Ошибки</th>
-                <th>Всего</th>
-                <th>%</th>
-            </tr>
-        </thead>
-        <tbody id="adminBody">
-            <tr><td colspan="5" style="text-align:center; color:#8aaac9;">Данные появятся после начала игры</td></tr>
-        </tbody>
-    </table>
-    <div style="margin-top: 12px; display: flex; gap: 10px; flex-wrap: wrap;">
-        <button class="admin-toggle" id="toggleAdminBtn">Скрыть статистику</button>
-        <button class="download-btn" id="downloadStatsBtn">Скачать статистику (CSV)</button>
-    </div>
-    <div style="margin-top: 8px; font-size: 0.8rem; color: #7f8c8d;">
-        Статистика видна только создателю сайта.
-    </div>
-</div>
 </body>
 </html>
