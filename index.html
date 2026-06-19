@@ -185,7 +185,7 @@
             box-shadow: 0 8px 20px rgba(0,0,0,0.05);
             padding: 28px 28px 32px;
             border: 4px solid transparent;
-            transition: transform 0.6s, border-color 0.3s;
+            transition: transform 0.6s, border-color 0.3s, min-height 0.3s;
             transform-style: preserve-3d;
             position: relative;
             text-align: center;
@@ -200,6 +200,10 @@
         .card .front, .card .back {
             backface-visibility: hidden;
             width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
         .card .back {
             transform: rotateY(180deg);
@@ -208,10 +212,6 @@
             left: 28px;
             right: 28px;
             bottom: 28px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
         }
         .card-label {
             display: inline-block;
@@ -231,13 +231,17 @@
             font-weight: 450;
             color: #0b1f2e;
             word-break: break-word;
+            text-align: center;
+            width: 100%;
         }
         .result-text {
-            font-size: 1.3rem;
+            font-size: 1.4rem;
             font-weight: 700;
             line-height: 1.5;
             color: #0b1f2e;
             word-break: break-word;
+            text-align: center;
+            width: 100%;
         }
         .result-text.correct {
             color: #1d7a44;
@@ -247,20 +251,32 @@
         }
         .explanation-text {
             font-size: 1.1rem;
-            line-height: 1.5;
+            line-height: 1.6;
             color: #1f3b54;
             margin-top: 12px;
-            padding: 12px;
-            background: rgba(255,255,255,0.5);
+            padding: 12px 16px;
+            background: rgba(255,255,255,0.6);
             border-radius: 16px;
             width: 100%;
+            text-align: center;
+            word-break: break-word;
+            max-height: 300px;
+            overflow-y: auto;
         }
-        /* Стили для карточки в зависимости от результата */
+        /* Адаптивный размер текста для длинных пояснений */
+        .explanation-text.long-text {
+            font-size: 0.95rem;
+        }
+        .explanation-text.very-long-text {
+            font-size: 0.85rem;
+        }
         .card.border-correct {
             border-color: #1d8b4f !important;
+            background: #d4edda !important;
         }
         .card.border-wrong {
             border-color: #8b0000 !important;
+            background: #fce4e4 !important;
         }
         .card.border-myth {
             border-color: #3d7ea6;
@@ -406,7 +422,6 @@
             border-radius: 30px;
             display: inline-block;
         }
-        /* Прогресс-бары для команд */
         .team-progress-container {
             display: flex;
             flex-wrap: wrap;
@@ -446,7 +461,6 @@
             color: #4d6a87;
             margin-top: 2px;
         }
-        /* Админ-панель скрыта в общедоступной версии */
         .admin-panel {
             display: none !important;
         }
@@ -461,6 +475,9 @@
             .next-btn { padding: 10px 30px; font-size: 1rem; }
             .team-progress { min-width: 120px; }
             .card .back { top: 16px; left: 16px; right: 16px; bottom: 16px; }
+            .explanation-text { font-size: 0.95rem; padding: 8px 12px; }
+            .explanation-text.long-text { font-size: 0.85rem; }
+            .explanation-text.very-long-text { font-size: 0.75rem; }
         }
     </style>
 </head>
@@ -472,7 +489,6 @@
     </div>
     <div class="subhead">Выберите режим, длину игры и начните!</div>
 
-    <!-- НАСТРОЙКА -->
     <div class="setup-area" id="setupArea">
         <h3>🎮 Выберите режим игры</h3>
         <div class="mode-selector">
@@ -495,7 +511,6 @@
         <div style="margin-top: 12px; font-size: 0.9rem; color: #4d6a87;" id="modeDisplay">Режим: <strong>Один игрок</strong></div>
     </div>
 
-    <!-- ИГРОВАЯ ОБЛАСТЬ -->
     <div id="gameArea" class="hidden">
         <div style="text-align: center; margin-bottom: 12px;">
             <span class="turn-indicator" id="turnIndicator">Ход: Команда 1</span>
@@ -537,7 +552,6 @@
         </div>
     </div>
 
-    <!-- АДМИН-ПАНЕЛЬ СКРЫТА в этой версии -->
     <div class="admin-panel" id="adminPanel"></div>
 </div>
 
@@ -690,7 +704,6 @@
     // ============================================================
 
     function getCards(count, seed) {
-        // Используем seed для воспроизводимого перемешивания
         const shuffled = shuffleArrayWithSeed(ALL_DATA, seed);
         return shuffled.slice(0, count);
     }
@@ -724,6 +737,18 @@
         container.innerHTML = html;
     }
 
+    function adjustExplanationTextSize(text) {
+        const el = document.getElementById('explanationText');
+        // Сбрасываем классы
+        el.classList.remove('long-text', 'very-long-text');
+        
+        if (text.length > 200) {
+            el.classList.add('very-long-text');
+        } else if (text.length > 100) {
+            el.classList.add('long-text');
+        }
+    }
+
     function showCard(index) {
         const card = state.cards[index];
         if (!card) return;
@@ -737,6 +762,7 @@
         document.getElementById('cardText').textContent = card.statement;
         document.getElementById('resultText').textContent = '';
         document.getElementById('explanationText').textContent = '';
+        document.getElementById('explanationText').className = 'explanation-text';
 
         document.getElementById('currentIndexDisplay').textContent = index + 1;
         document.getElementById('totalCardsDisplay').textContent = state.cards.length;
@@ -762,7 +788,7 @@
 
     function goToNextCard() {
         const nextBtn = document.getElementById('nextBtn');
-        nextBtn.disabled = true; // Блокируем сразу
+        nextBtn.disabled = true;
 
         if (state.currentCardIndex + 1 < state.cards.length) {
             state.currentCardIndex++;
@@ -777,7 +803,7 @@
             document.getElementById('turnIndicator').textContent = 'Игра окончена';
             saveStats();
         }
-        // Разблокируем через небольшую задержку (если есть следующая карточка)
+        // Разблокируем через небольшую задержку
         if (state.currentCardIndex + 1 < state.cards.length) {
             setTimeout(() => {
                 if (!document.getElementById('nextBtn').disabled) return;
@@ -806,25 +832,38 @@
         });
 
         const cardEl = document.getElementById('cardDisplay');
+        const resultText = document.getElementById('resultText');
+        const explanationText = document.getElementById('explanationText');
 
         if (isCorrect) {
             s.correct++;
             cardEl.classList.add('border-correct', 'flipped');
-            document.getElementById('resultText').textContent = '✅ Верно!';
-            document.getElementById('resultText').className = 'result-text correct';
-            document.getElementById('explanationText').textContent = '';
+            resultText.textContent = '✅ Верно!';
+            resultText.className = 'result-text correct';
+            
+            // Показываем пояснение только для мифов
+            if (card.type === 'myth' && card.explanation) {
+                explanationText.textContent = card.explanation;
+                adjustExplanationTextSize(card.explanation);
+            } else {
+                explanationText.textContent = '';
+                explanationText.className = 'explanation-text';
+            }
             document.getElementById('feedbackMessage').innerHTML = `<span>✅ Правильно!</span>`;
         } else {
             s.errors++;
             cardEl.classList.add('border-wrong', 'flipped');
             const typeLabel = card.type === 'myth' ? 'МИФ' : 'ФАКТ';
-            document.getElementById('resultText').textContent = `❌ Неверно! Это ${typeLabel}!`;
-            document.getElementById('resultText').className = 'result-text wrong';
+            resultText.textContent = `❌ Неверно! Это ${typeLabel}!`;
+            resultText.className = 'result-text wrong';
+            
             // Показываем пояснение только для мифов
             if (card.type === 'myth' && card.explanation) {
-                document.getElementById('explanationText').textContent = card.explanation;
+                explanationText.textContent = card.explanation;
+                adjustExplanationTextSize(card.explanation);
             } else {
-                document.getElementById('explanationText').textContent = '';
+                explanationText.textContent = '';
+                explanationText.className = 'explanation-text';
             }
             document.getElementById('feedbackMessage').innerHTML = `<span>❌ Неправильно! Это был ${typeLabel}.</span>`;
         }
@@ -852,9 +891,7 @@
             state.teams = [team1, team2];
         }
 
-        // Генерируем seed на основе текущего времени + случайное число
         state.seed = Date.now() + Math.floor(Math.random() * 10000);
-
         state.cards = getCards(state.selectedLength, state.seed);
         state.currentCardIndex = 0;
         state.currentTeamIndex = 0;
@@ -935,7 +972,6 @@
         }
     });
 
-    // Загружаем сохранённую статистику при старте
     loadStats();
     updateTeamProgress();
 </script>
