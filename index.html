@@ -180,7 +180,7 @@
         .card {
             width: 100%;
             min-height: 200px;
-            border-radius : 28px;
+            border-radius: 28px;
             box-shadow: 0 8px 20px rgba(0,0,0,0.05);
             padding: 28px 28px 32px;
             border: 4px solid transparent;
@@ -192,6 +192,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            overflow: hidden; /* ← ДОБАВЛЕНО */
         }
         .card.flipped {
             transform: rotateY(180deg);
@@ -207,14 +208,20 @@
         .card .back {
             transform: rotateY(180deg);
             position: absolute;
-            top: 28px;
-            left: 28px;
-            right: 28px;
-            bottom: 28px;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            bottom: 20px;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
+            align-items: flex-start;     /* ← БЫЛО: center */
+            justify-content: flex-start; /* ← БЫЛО: center */
+            overflow-y: auto;            /* ← ДОБАВЛЕНО */
+            overflow-x: hidden;          /* ← ДОБАВЛЕНО */
+            padding: 15px;               /* ← ДОБАВЛЕНО */
+            box-sizing: border-box;      /* ← ДОБАВЛЕНО */
+            word-break: break-word;      /* ← ДОБАВЛЕНО */
+            gap: 15px;                   /* ← ДОБАВЛЕНО */
         }
         .card-label {
             display: inline-block;
@@ -236,6 +243,8 @@
             word-break: break-word;
             text-align: center;
             width: 100%;
+            padding: 0 10px;          /* ← ДОБАВЛЕНО */
+            box-sizing: border-box;   /* ← ДОБАВЛЕНО */
         }
         .result-text {
             font-size: 1.4rem;
@@ -243,7 +252,8 @@
             line-height: 1.5;
             text-align: center;
             width: 100%;
-            margin-bottom: 8px;
+            margin-bottom: 0;         /* ← БЫЛО: 8px */
+            flex-shrink: 0;           /* ← ДОБАВЛЕНО */
         }
         .result-text.correct {
             color: #1d7a44;
@@ -252,18 +262,18 @@
             color: #8b0000;
         }
         .explanation-text {
-            font-size: 1.1rem;
+            font-size: 1.05rem;
             line-height: 1.6;
             color: #1f3b54;
-            margin-top: 12px;
             width: 100%;
             max-width: 100%;
             text-align: left;
-            padding: 0 20px;          /* ← БЫЛО: padding-left: 60px */
+            padding: 0;               /* ← БЫЛО: padding-left: 60px */
             word-break: break-word;
             overflow-wrap: break-word;
             box-sizing: border-box;
             display: block;
+            flex-shrink: 0;           /* ← ДОБАВЛЕНО */
         }
         .explanation-text.long-text {
             font-size: 0.95rem;
@@ -471,10 +481,20 @@
             .team-input-area input { width: 130px; }
             .next-btn { padding: 10px 30px; font-size: 1rem; }
             .team-progress { min-width: 120px; }
-            .card .back { top: 16px; left: 16px; right: 16px; bottom: 16px; }
-            .explanation-text { font-size: 0.95rem; padding: 8px 12px; }
-            .explanation-text.long-text { font-size: 0.85rem; }
+            .card .back { 
+                top: 12px; 
+                left: 12px; 
+                right: 12px; 
+                bottom: 12px; 
+                padding: 10px; 
+            }
+            .explanation-text { 
+                font-size: 0.9rem; 
+                padding: 0; 
+            }
+            .explanation-text.long-text { font-size: 0.8rem; }
             .explanation-text.very-long-text { font-size: 0.75rem; }
+            .result-text { font-size: 1.2rem; }
         }
     </style>
 </head>
