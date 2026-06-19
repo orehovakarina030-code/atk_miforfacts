@@ -182,46 +182,45 @@
             min-height: 200px;
             border-radius: 28px;
             box-shadow: 0 8px 20px rgba(0,0,0,0.05);
-            padding: 28px 28px 32px;
             border: 4px solid transparent;
             transition: transform 0.6s, border-color 0.3s, min-height 0.3s;
             transform-style: preserve-3d;
             position: relative;
             text-align: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden; /* ← ДОБАВЛЕНО */
         }
         .card.flipped {
             transform: rotateY(180deg);
         }
-        .card .front, .card .back {
-            backface-visibility: hidden;
+        .card-face {
             width: 100%;
+            min-height: 200px;
+            border-radius: 28px;
+            padding: 28px 28px 32px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
         }
-        .card .back {
-            transform: rotateY(180deg);
+        .card-front {
+            position: relative;
+            z-index: 2;
+        }
+        .card-back {
             position: absolute;
-            top: 20px;
-            left: 20px;
-            right: 20px;
-            bottom: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;     /* ← БЫЛО: center */
-            justify-content: flex-start; /* ← БЫЛО: center */
-            overflow-y: auto;            /* ← ДОБАВЛЕНО */
-            overflow-x: hidden;          /* ← ДОБАВЛЕНО */
-            padding: 15px;               /* ← ДОБАВЛЕНО */
-            box-sizing: border-box;      /* ← ДОБАВЛЕНО */
-            word-break: break-word;      /* ← ДОБАВЛЕНО */
-            gap: 15px;                   /* ← ДОБАВЛЕНО */
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            transform: rotateY(180deg);
+            align-items: flex-start;
+            justify-content: flex-start;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 30px;
+            gap: 15px;
+            z-index: 1;
         }
         .card-label {
             display: inline-block;
@@ -243,8 +242,6 @@
             word-break: break-word;
             text-align: center;
             width: 100%;
-            padding: 0 10px;          /* ← ДОБАВЛЕНО */
-            box-sizing: border-box;   /* ← ДОБАВЛЕНО */
         }
         .result-text {
             font-size: 1.4rem;
@@ -252,8 +249,7 @@
             line-height: 1.5;
             text-align: center;
             width: 100%;
-            margin-bottom: 0;         /* ← БЫЛО: 8px */
-            flex-shrink: 0;           /* ← ДОБАВЛЕНО */
+            flex-shrink: 0;
         }
         .result-text.correct {
             color: #1d7a44;
@@ -268,12 +264,10 @@
             width: 100%;
             max-width: 100%;
             text-align: left;
-            padding: 0;               /* ← БЫЛО: padding-left: 60px */
             word-break: break-word;
             overflow-wrap: break-word;
             box-sizing: border-box;
-            display: block;
-            flex-shrink: 0;           /* ← ДОБАВЛЕНО */
+            flex-shrink: 0;
         }
         .explanation-text.long-text {
             font-size: 0.95rem;
@@ -301,7 +295,6 @@
             margin: 30px 0 16px;
         }
         .choice-btn {
-            border: none;
             background: white;
             border-radius: 80px;
             padding: 14px 34px;
@@ -481,17 +474,8 @@
             .team-input-area input { width: 130px; }
             .next-btn { padding: 10px 30px; font-size: 1rem; }
             .team-progress { min-width: 120px; }
-            .card .back { 
-                top: 12px; 
-                left: 12px; 
-                right: 12px; 
-                bottom: 12px; 
-                padding: 10px; 
-            }
-            .explanation-text { 
-                font-size: 0.9rem; 
-                padding: 0; 
-            }
+            .card-back { padding: 20px; }
+            .explanation-text { font-size: 0.9rem; }
             .explanation-text.long-text { font-size: 0.8rem; }
             .explanation-text.very-long-text { font-size: 0.75rem; }
             .result-text { font-size: 1.2rem; }
@@ -538,11 +522,11 @@
         <div class="card-area">
             <div class="card-container">
                 <div class="card border-myth" id="cardDisplay">
-                    <div class="front">
+                    <div class="card-face card-front">
                         <div class="card-label" id="cardLabel">Утверждение</div>
                         <div class="card-text" id="cardText">Загружаем...</div>
                     </div>
-                    <div class="back">
+                    <div class="card-face card-back">
                         <div class="result-text" id="resultText"></div>
                         <div class="explanation-text" id="explanationText"></div>
                     </div>
@@ -573,9 +557,6 @@
 </div>
 
 <script>
-    // ============================================================
-    // ДАННЫЕ: 66 пар (миф + факт) - СОКРАЩЕННАЯ ВЕРСИЯ ДЛЯ ПРИМЕРА
-    // ============================================================
     const ALL_DATA = [
         { type: 'myth', statement: "Уголовный жаргон — это признак причастности к крутому кругу лиц", explanation: "Уголовный жаргон — это маркер необразованности. Люди с высшим образованием не используют блатной язык." },
         { type: 'myth', statement: "До 14 лет ничего не будет, это будет считаться шалостью", explanation: "До 14 лет ставят на учёт в ПДН, вызывают на комиссию, отправляют в спецшколу." },
@@ -584,9 +565,6 @@
         { type: 'myth', statement: "В интернете под чужим именем меня никто не найдет", explanation: "IP-адрес, номер телефона, геолокация — всё фиксируется. Полиция находит авторов за 1–2 дня." }
     ];
 
-    // ============================================================
-    // СОСТОЯНИЕ ИГРЫ
-    // ============================================================
     let state = {
         mode: 'solo',
         teams: ['Команда 1', 'Команда 2'],
@@ -603,9 +581,6 @@
         seed: 0
     };
 
-    // ============================================================
-    // ГЕНЕРАТОР ПСЕВДОСЛУЧАЙНЫХ ЧИСЕЛ (seed-based)
-    // ============================================================
     function seededRandom(seed) {
         let s = seed;
         return function() {
@@ -624,9 +599,6 @@
         return result;
     }
 
-    // ============================================================
-    // РАБОТА С LOCALSTORAGE
-    // ============================================================
     function saveStats() {
         const data = {
             scores: state.scores,
@@ -656,10 +628,6 @@
     function clearStats() {
         localStorage.removeItem('mifFaktStats');
     }
-
-    // ============================================================
-    // ФУНКЦИИ ИГРЫ
-    // ============================================================
 
     function getCards(count, seed) {
         const shuffled = shuffleArrayWithSeed(ALL_DATA, seed);
@@ -873,10 +841,6 @@
         clearStats();
         updateTeamProgress();
     }
-
-    // ============================================================
-    // ИНИЦИАЛИЗАЦИЯ
-    // ============================================================
 
     const modeBtns = document.querySelectorAll('.mode-btn');
     const lengthBtns = document.querySelectorAll('.length-btn');
