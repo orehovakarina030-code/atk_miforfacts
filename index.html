@@ -212,6 +212,10 @@
             left: 28px;
             right: 28px;
             bottom: 28px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
         .card-label {
             display: inline-block;
@@ -242,6 +246,7 @@
             word-break: break-word;
             text-align: center;
             width: 100%;
+            margin-bottom: 8px;
         }
         .result-text.correct {
             color: #1d7a44;
@@ -258,10 +263,12 @@
             background: rgba(255,255,255,0.6);
             border-radius: 16px;
             width: 100%;
+            max-width: 100%;
             text-align: center;
             word-break: break-word;
-            max-height: 300px;
-            overflow-y: auto;
+            overflow-wrap: break-word;
+            hyphens: auto;
+            box-sizing: border-box;
         }
         /* Адаптивный размер текста для длинных пояснений */
         .explanation-text.long-text {
@@ -739,12 +746,10 @@
 
     function adjustExplanationTextSize(text) {
         const el = document.getElementById('explanationText');
-        // Сбрасываем классы
         el.classList.remove('long-text', 'very-long-text');
-        
-        if (text.length > 200) {
+        if (text && text.length > 200) {
             el.classList.add('very-long-text');
-        } else if (text.length > 100) {
+        } else if (text && text.length > 100) {
             el.classList.add('long-text');
         }
     }
@@ -754,13 +759,13 @@
         if (!card) return;
 
         const cardEl = document.getElementById('cardDisplay');
-        // Сбрасываем классы
         cardEl.className = 'card border-myth';
         cardEl.classList.remove('flipped', 'border-correct', 'border-wrong');
 
         document.getElementById('cardLabel').textContent = 'Утверждение';
         document.getElementById('cardText').textContent = card.statement;
         document.getElementById('resultText').textContent = '';
+        document.getElementById('resultText').className = 'result-text';
         document.getElementById('explanationText').textContent = '';
         document.getElementById('explanationText').className = 'explanation-text';
 
@@ -803,7 +808,6 @@
             document.getElementById('turnIndicator').textContent = 'Игра окончена';
             saveStats();
         }
-        // Разблокируем через небольшую задержку
         if (state.currentCardIndex + 1 < state.cards.length) {
             setTimeout(() => {
                 if (!document.getElementById('nextBtn').disabled) return;
@@ -840,8 +844,6 @@
             cardEl.classList.add('border-correct', 'flipped');
             resultText.textContent = '✅ Верно!';
             resultText.className = 'result-text correct';
-            
-            // Показываем пояснение только для мифов
             if (card.type === 'myth' && card.explanation) {
                 explanationText.textContent = card.explanation;
                 adjustExplanationTextSize(card.explanation);
@@ -856,8 +858,6 @@
             const typeLabel = card.type === 'myth' ? 'МИФ' : 'ФАКТ';
             resultText.textContent = `❌ Неверно! Это ${typeLabel}!`;
             resultText.className = 'result-text wrong';
-            
-            // Показываем пояснение только для мифов
             if (card.type === 'myth' && card.explanation) {
                 explanationText.textContent = card.explanation;
                 adjustExplanationTextSize(card.explanation);
