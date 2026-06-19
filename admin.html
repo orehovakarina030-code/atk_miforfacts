@@ -20,7 +20,7 @@
             padding: 40px;
             border-radius: 32px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            max-width: 800px;
+            max-width: 1000px;
             width: 100%;
             text-align: center;
         }
@@ -133,6 +133,22 @@
             max-width: 200px;
             word-break: break-word;
         }
+        .mode-info {
+            display: inline-block;
+            padding: 4px 16px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+        .mode-info.solo {
+            background: #d9e6f2;
+            color: #1f3b54;
+        }
+        .mode-info.teams {
+            background: #fce4e4;
+            color: #8b0000;
+        }
         @media (max-width: 600px) {
             .login-box, .admin-container { padding: 20px; }
             .log-container td { max-width: 100px; font-size: 0.75rem; }
@@ -236,24 +252,39 @@
             const seed = data.seed || '—';
             const date = data.date ? new Date(data.date).toLocaleString() : '—';
 
+            // Определяем режим по количеству команд и логу
+            const uniqueTeams = [...new Set(log.map(item => item.team))];
+            const mode = uniqueTeams.length > 1 ? 'teams' : 'solo';
+            const modeLabel = mode === 'teams' ? '👥 Две команды' : '👤 Один игрок';
+
+            // Количество вопросов на команду (если режим командный)
+            const totalCards = log.length;
+            const questionsPerTeam = mode === 'teams' ? Math.ceil(totalCards / 2) : totalCards;
+
             document.getElementById('statsInfo').innerHTML = `
                 🗓️ Дата: ${date}<br>
                 🔢 Seed: ${seed}<br>
                 👥 Команды: ${teams.join(', ')}<br>
-                📝 Всего ответов: ${log.length}
+                📝 Всего ответов: ${log.length}<br>
+                🎮 Режим: <span class="mode-info ${mode}">${modeLabel}</span>
+                ${mode === 'teams' ? `<br>📊 Каждая команда ответила на ${questionsPerTeam} вопросов` : ''}
             `;
 
             let html = '';
             teams.forEach(team => {
                 const s = scores[team] || { correct: 0, errors: 0, total: 0 };
                 const pct = s.total > 0 ? Math.round((s.correct / s.total) * 100) : 0;
+                // Прогресс относительно вопросов команды
+                const progressPct = mode === 'teams' && questionsPerTeam > 0
+                    ? Math.round((s.total / questionsPerTeam) * 100)
+                    : pct;
                 html += `
                     <tr>
                         <td><strong>${team}</strong></td>
                         <td class="correct">${s.correct}</td>
                         <td class="errors">${s.errors}</td>
                         <td>${s.total}</td>
-                        <td>${pct}%</td>
+                        <td>${pct}% (прогресс: ${Math.min(progressPct, 100)}%)</td>
                     </tr>
                 `;
             });
@@ -303,12 +334,26 @@
             const teams = data.teams || ['Команда 1', 'Команда 2'];
             const date = data.date || new Date().toISOString();
 
+            // Определяем режим
+            const uniqueTeams = [...new Set(log.map(item => item.team))];
+            const mode = uniqueTeams.length > 1 ? 'teams' : 'solo';
+            const totalCards = log.length;
+            const questionsPerTeam = mode === 'teams' ? Math.ceil(totalCards / 2) : totalCards;
+
             let csv = 'Итоговая статистика:\n';
-            csv += 'Команда,Правильно,Ошибки,Всего,%\n';
+            csv += `Режим: ${mode === 'teams' ? 'Две команды' : 'Один игрок'}\n`;
+            csv += `Всего вопросов: ${totalCards}\n`;
+            if (mode === 'teams') {
+                csv += `Вопросов на команду: ${questionsPerTeam}\n`;
+            }
+            csv += '\nКоманда,Правильно,Ошибки,Всего,% (правильных),Прогресс (%)\n';
             teams.forEach(team => {
                 const s = scores[team] || { correct: 0, errors: 0, total: 0 };
                 const pct = s.total > 0 ? Math.round((s.correct / s.total) * 100) : 0;
-                csv += `"${team}",${s.correct},${s.errors},${s.total},${pct}%\n`;
+                const progressPct = mode === 'teams' && questionsPerTeam > 0
+                    ? Math.round((s.total / questionsPerTeam) * 100)
+                    : pct;
+                csv += `"${team}",${s.correct},${s.errors},${s.total},${pct}%,${Math.min(progressPct, 100)}%\n`;
             });
 
             csv += '\nДетальный лог:\n';
