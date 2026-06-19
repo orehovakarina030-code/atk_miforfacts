@@ -231,11 +231,7 @@
             border: 2px solid #cbdae8;
             cursor: pointer;
             transition: 0.15s;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
             min-width: 130px;
-            justify-content: center;
         }
         .choice-btn:hover:not(:disabled) {
             transform: scale(1.02);
@@ -260,6 +256,31 @@
         .choice-btn.fact-btn:hover:not(:disabled) {
             background: #d4edda;
             border-color: #1d7a44;
+        }
+        .next-btn-container {
+            display: flex;
+            justify-content: center;
+            margin: 10px 0 5px;
+        }
+        .next-btn {
+            padding: 12px 40px;
+            background: #2b5a7a;
+            color: white;
+            border: none;
+            border-radius: 60px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+        .next-btn:hover:not(:disabled) {
+            background: #1f4b6e;
+            transform: scale(1.02);
+        }
+        .next-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            transform: none;
         }
         .info-panel {
             display: flex;
@@ -319,7 +340,6 @@
             text-align: center;
             padding: 10px;
         }
-        /* Стиль для админ-панели (скрытой от игроков) */
         .admin-panel {
             margin-top: 20px;
             background: #f8faff;
@@ -419,6 +439,7 @@
             h1 { font-size: 1.6rem; }
             .length-btn, .mode-btn { padding: 10px 16px; font-size: 0.85rem; }
             .team-input-area input { width: 130px; }
+            .next-btn { padding: 10px 30px; font-size: 1rem; }
         }
     </style>
 </head>
@@ -434,21 +455,21 @@
     <div class="setup-area" id="setupArea">
         <h3>🎮 Выберите режим игры</h3>
         <div class="mode-selector">
-            <button class="mode-btn active" data-mode="solo">👤 Один игрок</button>
-            <button class="mode-btn" data-mode="teams">👥 Две команды</button>
+            <button class="mode-btn active" data-mode="solo">Один игрок</button>
+            <button class="mode-btn" data-mode="teams">Две команды</button>
         </div>
 
         <h3>📏 Выберите длину игры</h3>
         <div class="length-buttons">
-            <button class="length-btn" data-count="22" data-label="Короткая">🟢 Короткая <span class="count">(22 карточки)</span></button>
-            <button class="length-btn active" data-count="44" data-label="Средняя">🟡 Средняя <span class="count">(44 карточки)</span></button>
-            <button class="length-btn" data-count="66" data-label="Длинная">🔴 Длинная <span class="count">(66 карточек)</span></button>
+            <button class="length-btn" data-count="22">Короткая <span class="count">(22 карточки)</span></button>
+            <button class="length-btn active" data-count="44">Средняя <span class="count">(44 карточки)</span></button>
+            <button class="length-btn" data-count="66">Длинная <span class="count">(66 карточек)</span></button>
         </div>
 
         <div class="team-input-area" id="teamInputArea">
             <input type="text" id="team1Input" placeholder="Название команды 1" value="Команда 1">
             <input type="text" id="team2Input" placeholder="Название команды 2" value="Команда 2">
-            <button class="btn-start" id="startGameBtn">🚀 Начать игру</button>
+            <button class="btn-start" id="startGameBtn">Начать игру</button>
         </div>
         <div style="margin-top: 12px; font-size: 0.9rem; color: #4d6a87;" id="modeDisplay">Режим: <strong>Один игрок</strong></div>
     </div>
@@ -456,7 +477,7 @@
     <!-- ИГРОВАЯ ОБЛАСТЬ -->
     <div id="gameArea" class="hidden">
         <div style="text-align: center; margin-bottom: 12px;">
-            <span class="turn-indicator" id="turnIndicator">🎯 Ход: Команда 1</span>
+            <span class="turn-indicator" id="turnIndicator">Ход: Команда 1</span>
         </div>
 
         <div class="card-area">
@@ -467,8 +488,12 @@
         </div>
 
         <div class="choices">
-            <button class="choice-btn myth-btn" id="mythBtn">❌ Миф</button>
-            <button class="choice-btn fact-btn" id="factBtn">✅ Факт</button>
+            <button class="choice-btn myth-btn" id="mythBtn">Миф</button>
+            <button class="choice-btn fact-btn" id="factBtn">Факт</button>
+        </div>
+
+        <div class="next-btn-container">
+            <button class="next-btn" id="nextBtn" disabled>Далее →</button>
         </div>
 
         <div class="info-panel">
@@ -477,7 +502,7 @@
         </div>
 
         <div class="feedback" id="feedbackMessage">
-            <span>👆 Нажми «Миф» или «Факт»</span>
+            <span>Нажмите «Миф» или «Факт»</span>
         </div>
     </div>
 
@@ -488,10 +513,10 @@
             <thead>
                 <tr>
                     <th>Команда / Игрок</th>
-                    <th>✅ Правильно</th>
-                    <th>❌ Ошибки</th>
-                    <th>📊 Всего</th>
-                    <th>🎯 %</th>
+                    <th>Правильно</th>
+                    <th>Ошибки</th>
+                    <th>Всего</th>
+                    <th>%</th>
                 </tr>
             </thead>
             <tbody id="adminBody">
@@ -499,11 +524,11 @@
             </tbody>
         </table>
         <div style="margin-top: 12px; display: flex; gap: 10px; flex-wrap: wrap;">
-            <button class="admin-toggle" id="toggleAdminBtn">👁️ Скрыть статистику</button>
-            <button class="download-btn" id="downloadStatsBtn">📥 Скачать статистику (CSV)</button>
+            <button class="admin-toggle" id="toggleAdminBtn">Скрыть статистику</button>
+            <button class="download-btn" id="downloadStatsBtn">Скачать статистику (CSV)</button>
         </div>
         <div style="margin-top: 8px; font-size: 0.8rem; color: #7f8c8d;">
-            ⚠️ Статистика видна только создателю сайта. Игроки её не видят.
+            Статистика видна только создателю сайта. Игроки её не видят.
         </div>
     </div>
 </div>
@@ -583,7 +608,7 @@
     // СОСТОЯНИЕ ИГРЫ
     // ============================================================
     let state = {
-        mode: 'solo', // 'solo' или 'teams'
+        mode: 'solo',
         teams: ['Команда 1', 'Команда 2'],
         selectedLength: 44,
         currentTeamIndex: 0,
@@ -592,7 +617,8 @@
         isAnswered: false,
         gameStarted: false,
         scores: {},
-        gameLog: []
+        gameLog: [],
+        waitingForNext: false
     };
 
     // DOM
@@ -603,6 +629,7 @@
     const cardText = document.getElementById('cardText');
     const mythBtn = document.getElementById('mythBtn');
     const factBtn = document.getElementById('factBtn');
+    const nextBtn = document.getElementById('nextBtn');
     const resetBtn = document.getElementById('resetBtn');
     const currentIndexSpan = document.getElementById('currentIndexDisplay');
     const totalCardsSpan = document.getElementById('totalCardsDisplay');
@@ -670,36 +697,38 @@
         const card = state.cards[index];
         if (!card) return;
         cardDisplay.className = 'card myth';
-        cardLabel.innerHTML = '🧩 МИФ';
+        cardLabel.innerHTML = 'МИФ';
         cardLabel.style.color = '#1f4b6e';
         cardText.innerHTML = card.myth;
         currentIndexSpan.textContent = index + 1;
         totalCardsSpan.textContent = state.cards.length;
         const team = state.teams[state.currentTeamIndex];
-        turnIndicator.textContent = `🎯 Ход: ${team}`;
+        turnIndicator.textContent = `Ход: ${team}`;
         state.isAnswered = false;
+        state.waitingForNext = false;
         mythBtn.disabled = false;
         factBtn.disabled = false;
-        feedbackDiv.innerHTML = `<span>🤔 ${team}, что думаете? Миф или факт?</span>`;
+        nextBtn.disabled = true;
+        feedbackDiv.innerHTML = `<span>${team}, что думаете? Миф или факт?</span>`;
     }
 
     function nextTeam() {
         if (state.mode === 'teams') {
             state.currentTeamIndex = (state.currentTeamIndex + 1) % state.teams.length;
         }
-        // В solo режиме всегда одна команда
     }
 
-    function nextCard() {
+    function goToNextCard() {
         if (state.currentCardIndex + 1 < state.cards.length) {
             state.currentCardIndex++;
             nextTeam();
             showCard(state.currentCardIndex);
         } else {
-            feedbackDiv.innerHTML = `<span class="game-over-msg">🏁 Игра завершена! Статистика в админ-панели.</span>`;
+            feedbackDiv.innerHTML = `<span class="game-over-msg">Игра завершена! Статистика в админ-панели.</span>`;
             mythBtn.disabled = true;
             factBtn.disabled = true;
-            turnIndicator.textContent = '🏁 Игра окончена';
+            nextBtn.disabled = true;
+            turnIndicator.textContent = 'Игра окончена';
         }
     }
 
@@ -712,7 +741,6 @@
         const team = state.teams[state.currentTeamIndex];
         const s = state.scores[team] || { correct: 0, errors: 0, total: 0 };
 
-        // Логируем действие
         state.gameLog.push({
             team: team,
             cardIndex: state.currentCardIndex,
@@ -724,28 +752,26 @@
 
         if (isCorrect) {
             s.correct++;
-            feedbackDiv.innerHTML = `<span>✅ Верно! Это действительно МИФ. Вот факт:</span>`;
+            feedbackDiv.innerHTML = `<span>Верно! Это действительно МИФ. Вот факт:</span>`;
         } else {
             s.errors++;
-            feedbackDiv.innerHTML = `<span>❌ Не угадал! Это был МИФ. Вот настоящий факт:</span>`;
+            feedbackDiv.innerHTML = `<span>Не угадал! Это был МИФ. Вот настоящий факт:</span>`;
         }
         s.total++;
         state.scores[team] = s;
 
         // Показываем факт
         cardDisplay.className = 'card fact';
-        cardLabel.innerHTML = '✅ ФАКТ';
+        cardLabel.innerHTML = 'ФАКТ';
         cardLabel.style.color = '#0f5c2e';
         cardText.innerHTML = card.fact;
 
         state.isAnswered = true;
+        state.waitingForNext = true;
         mythBtn.disabled = true;
         factBtn.disabled = true;
+        nextBtn.disabled = false;
         updateAdminPanel();
-
-        setTimeout(() => {
-            nextCard();
-        }, 3500);
     }
 
     function startGame() {
@@ -778,11 +804,13 @@
         state.currentCardIndex = 0;
         state.currentTeamIndex = 0;
         state.isAnswered = false;
+        state.waitingForNext = false;
         state.scores = {};
         state.gameLog = [];
         updateAdminPanel();
-        feedbackDiv.innerHTML = `<span>👆 Нажми «Миф» или «Факт»</span>`;
-        turnIndicator.textContent = '🎯 Ход: ---';
+        feedbackDiv.innerHTML = `<span>Нажмите «Миф» или «Факт»</span>`;
+        turnIndicator.textContent = 'Ход: ---';
+        nextBtn.disabled = true;
     }
 
     function downloadCSV() {
@@ -795,13 +823,11 @@
         state.gameLog.forEach(log => {
             const choiceLabel = log.choice === 'myth' ? 'Миф' : 'Факт';
             const correctLabel = log.isCorrect ? 'Да' : 'Нет';
-            // Экранируем кавычки в тексте
             const mythEscaped = log.myth.replace(/"/g, '""');
             const factEscaped = log.fact.replace(/"/g, '""');
             csv += `"${log.team}",${log.cardIndex + 1},"${mythEscaped}","${factEscaped}","${choiceLabel}","${correctLabel}"\n`;
         });
 
-        // Добавляем итоговую статистику
         csv += '\nИтоговая статистика:\n';
         state.teams.forEach(team => {
             const s = state.scores[team] || { correct: 0, errors: 0, total: 0 };
@@ -829,7 +855,6 @@
             this.classList.add('active');
             state.mode = this.dataset.mode;
             modeDisplay.textContent = `Режим: ${state.mode === 'solo' ? 'Один игрок' : 'Две команды'}`;
-            // Показываем/скрываем второе поле
             const team2Input = document.getElementById('team2Input');
             if (state.mode === 'solo') {
                 team2Input.style.display = 'none';
@@ -838,7 +863,6 @@
             }
         });
     });
-    // Инициализация: скрываем второе поле для solo
     document.getElementById('team2Input').style.display = 'none';
 
     // Выбор длины
@@ -857,6 +881,9 @@
     mythBtn.addEventListener('click', function() { handleChoice('myth'); });
     factBtn.addEventListener('click', function() { handleChoice('fact'); });
 
+    // Кнопка Далее
+    nextBtn.addEventListener('click', goToNextCard);
+
     // Сброс
     resetBtn.addEventListener('click', resetGame);
 
@@ -866,11 +893,11 @@
         const table = document.getElementById('adminTable');
         if (adminVisible) {
             table.style.display = 'none';
-            this.textContent = '👁️ Показать статистику';
+            this.textContent = 'Показать статистику';
             adminVisible = false;
         } else {
             table.style.display = '';
-            this.textContent = '👁️ Скрыть статистику';
+            this.textContent = 'Скрыть статистику';
             adminVisible = true;
         }
     });
@@ -878,10 +905,16 @@
     // Скачать статистику
     downloadStatsBtn.addEventListener('click', downloadCSV);
 
-    // Клавиши 1-миф, 2-факт
+    // Клавиши
     document.addEventListener('keydown', (e) => {
         if (e.key === '1') { if (!mythBtn.disabled) mythBtn.click(); }
         else if (e.key === '2') { if (!factBtn.disabled) factBtn.click(); }
+        else if (e.key === 'Enter' || e.key === ' ') {
+            if (!nextBtn.disabled) {
+                e.preventDefault();
+                nextBtn.click();
+            }
+        }
     });
 
     // Инициализация
