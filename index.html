@@ -723,20 +723,27 @@
         state.gameStartTime = Date.now();
     }
 
+    // ============================================================
+    // ИСПРАВЛЕННАЯ ФУНКЦИЯ ПРОГРЕСС-БАРА
+    // ============================================================
     function updateTeamProgress() {
         const container = document.getElementById('teamProgressContainer');
         let html = '';
+        const totalCards = state.cards.length;
+        // Количество вопросов на команду (в режиме "Две команды" — половина)
+        const questionsPerTeam = state.mode === 'teams' ? Math.ceil(totalCards / 2) : totalCards;
+        
         state.teams.forEach(team => {
             const s = state.scores[team] || { correct: 0, errors: 0, total: 0 };
-            const total = state.cards.length || 1;
-            const progress = Math.round((s.total / total) * 100);
+            // Прогресс считаем от количества вопросов, которые команда должна ответить
+            const progress = Math.round((s.total / questionsPerTeam) * 100);
             html += `
                 <div class="team-progress">
                     <div class="team-name">${team}</div>
                     <div class="progress-bar">
                         <div class="fill" style="width: ${Math.min(progress, 100)}%"></div>
                     </div>
-                    <div class="progress-text">${s.total} / ${total} (${Math.min(progress, 100)}%)</div>
+                    <div class="progress-text">${s.total} / ${questionsPerTeam} (${Math.min(progress, 100)}%)</div>
                 </div>
             `;
         });
@@ -800,7 +807,7 @@
             showCard(state.currentCardIndex);
         } else {
             document.getElementById('feedbackMessage').innerHTML =
-                `<span class="game-over-msg">🏁 Игра завершена! Скачайте статистику через админ-панель.</span>`;
+                `<span class="game-over-msg">🏁 Игра завершена!</span>`;
             document.getElementById('mythBtn').disabled = true;
             document.getElementById('factBtn').disabled = true;
             nextBtn.disabled = true;
@@ -843,7 +850,6 @@
             cardEl.classList.add('border-correct', 'flipped');
             resultText.textContent = '✅ Верно!';
             resultText.className = 'result-text correct';
-            // Для мифов показываем пояснение, для фактов — нет
             if (card.type === 'myth' && card.explanation) {
                 explanationText.textContent = card.explanation;
                 adjustExplanationTextSize(card.explanation);
@@ -858,7 +864,6 @@
             const typeLabel = card.type === 'myth' ? 'МИФ' : 'ФАКТ';
             resultText.textContent = `❌ Неверно! Это ${typeLabel}!`;
             resultText.className = 'result-text wrong';
-            // Для мифов показываем пояснение, для фактов — нет
             if (card.type === 'myth' && card.explanation) {
                 explanationText.textContent = card.explanation;
                 adjustExplanationTextSize(card.explanation);
