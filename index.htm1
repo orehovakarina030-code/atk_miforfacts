@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Миф / Факт · Игра для команд</title>
+    <title>Миф / Факт · Игра</title>
     <style>
+        /* === ВЕСЬ CSS КАК В ПРЕДЫДУЩЕЙ ВЕРСИИ === */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -157,12 +158,6 @@
             opacity: 0.4;
             cursor: not-allowed;
             transform: none;
-        }
-        .btn-secondary {
-            background: #2b5a7a;
-        }
-        .btn-secondary:hover {
-            background: #1f4b6e;
         }
         .card-area {
             background: #eef2f7;
@@ -340,88 +335,6 @@
             text-align: center;
             padding: 10px;
         }
-        .admin-panel {
-            margin-top: 20px;
-            background: #f8faff;
-            border-radius: 24px;
-            padding: 18px 20px;
-            border: 2px solid #c0392b;
-            position: relative;
-        }
-        .admin-panel::before {
-            content: "🔒 АДМИН-ПАНЕЛЬ";
-            position: absolute;
-            top: -12px;
-            left: 20px;
-            background: #c0392b;
-            color: white;
-            padding: 2px 16px;
-            border-radius: 30px;
-            font-size: 0.7rem;
-            font-weight: 700;
-            letter-spacing: 1px;
-        }
-        .admin-panel h3 {
-            font-size: 1rem;
-            color: #1f3b54;
-            margin: 8px 0 12px;
-        }
-        .admin-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.95rem;
-        }
-        .admin-table th {
-            text-align: left;
-            padding: 8px 12px;
-            background: #eef2f7;
-            border-radius: 12px;
-            font-weight: 600;
-            color: #1f3b54;
-        }
-        .admin-table td {
-            padding: 8px 12px;
-            border-bottom: 1px solid #eef2f7;
-        }
-        .admin-table .errors {
-            font-weight: 700;
-            color: #c0392b;
-        }
-        .admin-table .correct {
-            font-weight: 700;
-            color: #1d7a44;
-        }
-        .admin-toggle {
-            margin-top: 12px;
-            padding: 6px 20px;
-            background: #c0392b;
-            color: white;
-            border: none;
-            border-radius: 30px;
-            font-size: 0.8rem;
-            cursor: pointer;
-            font-weight: 600;
-        }
-        .admin-toggle:hover {
-            background: #a93226;
-        }
-        .admin-hidden {
-            display: none;
-        }
-        .download-btn {
-            margin-left: 10px;
-            padding: 6px 18px;
-            background: #2b5a7a;
-            color: white;
-            border: none;
-            border-radius: 30px;
-            font-size: 0.8rem;
-            cursor: pointer;
-            font-weight: 600;
-        }
-        .download-btn:hover {
-            background: #1f4b6e;
-        }
         .turn-indicator {
             font-weight: 600;
             font-size: 1.1rem;
@@ -430,6 +343,10 @@
             background: #eef2f7;
             border-radius: 30px;
             display: inline-block;
+        }
+        /* Админ-панель СКРЫТА в общедоступной версии */
+        .admin-panel {
+            display: none !important;
         }
         @media (max-width: 550px) {
             .container { padding: 18px; }
@@ -506,31 +423,8 @@
         </div>
     </div>
 
-    <!-- АДМИН-ПАНЕЛЬ (скрыта от игроков, видит создатель) -->
-    <div class="admin-panel" id="adminPanel">
-        <h3>📊 Статистика игры</h3>
-        <table class="admin-table" id="adminTable">
-            <thead>
-                <tr>
-                    <th>Команда / Игрок</th>
-                    <th>Правильно</th>
-                    <th>Ошибки</th>
-                    <th>Всего</th>
-                    <th>%</th>
-                </tr>
-            </thead>
-            <tbody id="adminBody">
-                <tr><td colspan="5" style="text-align:center; color:#8aaac9;">Данные появятся после начала игры</td></tr>
-            </tbody>
-        </table>
-        <div style="margin-top: 12px; display: flex; gap: 10px; flex-wrap: wrap;">
-            <button class="admin-toggle" id="toggleAdminBtn">Скрыть статистику</button>
-            <button class="download-btn" id="downloadStatsBtn">Скачать статистику (CSV)</button>
-        </div>
-        <div style="margin-top: 8px; font-size: 0.8rem; color: #7f8c8d;">
-            Статистика видна только создателю сайта. Игроки её не видят.
-        </div>
-    </div>
+    <!-- АДМИН-ПАНЕЛЬ СКРЫТА в этой версии -->
+    <div class="admin-panel" id="adminPanel"></div>
 </div>
 
 <script>
@@ -635,13 +529,10 @@
     const totalCardsSpan = document.getElementById('totalCardsDisplay');
     const turnIndicator = document.getElementById('turnIndicator');
     const feedbackDiv = document.getElementById('feedbackMessage');
-    const adminBody = document.getElementById('adminBody');
     const team1Input = document.getElementById('team1Input');
     const team2Input = document.getElementById('team2Input');
     const startGameBtn = document.getElementById('startGameBtn');
     const modeDisplay = document.getElementById('modeDisplay');
-    const toggleAdminBtn = document.getElementById('toggleAdminBtn');
-    const downloadStatsBtn = document.getElementById('downloadStatsBtn');
 
     // Кнопки режимов и длины
     const modeBtns = document.querySelectorAll('.mode-btn');
@@ -670,27 +561,6 @@
             state.scores[team] = { correct: 0, errors: 0, total: 0 };
         });
         state.gameLog = [];
-    }
-
-    function updateAdminPanel() {
-        let html = '';
-        state.teams.forEach(team => {
-            const s = state.scores[team] || { correct: 0, errors: 0, total: 0 };
-            const pct = s.total > 0 ? Math.round((s.correct / s.total) * 100) : 0;
-            html += `
-                <tr>
-                    <td><strong>${team}</strong></td>
-                    <td class="correct">${s.correct}</td>
-                    <td class="errors">${s.errors}</td>
-                    <td>${s.total}</td>
-                    <td>${pct}%</td>
-                </tr>
-            `;
-        });
-        if (!html) {
-            html = `<tr><td colspan="5" style="text-align:center; color:#8aaac9;">Данные появятся после начала игры</td></tr>`;
-        }
-        adminBody.innerHTML = html;
     }
 
     function showCard(index) {
@@ -724,7 +594,7 @@
             nextTeam();
             showCard(state.currentCardIndex);
         } else {
-            feedbackDiv.innerHTML = `<span class="game-over-msg">Игра завершена! Статистика в админ-панели.</span>`;
+            feedbackDiv.innerHTML = `<span class="game-over-msg">Игра завершена! Нажмите «В начало».</span>`;
             mythBtn.disabled = true;
             factBtn.disabled = true;
             nextBtn.disabled = true;
@@ -771,7 +641,6 @@
         mythBtn.disabled = true;
         factBtn.disabled = true;
         nextBtn.disabled = false;
-        updateAdminPanel();
     }
 
     function startGame() {
@@ -789,7 +658,6 @@
         state.currentTeamIndex = 0;
         state.gameStarted = true;
         initScores();
-        updateAdminPanel();
 
         setupArea.classList.add('hidden');
         gameArea.classList.remove('hidden');
@@ -807,48 +675,15 @@
         state.waitingForNext = false;
         state.scores = {};
         state.gameLog = [];
-        updateAdminPanel();
         feedbackDiv.innerHTML = `<span>Нажмите «Миф» или «Факт»</span>`;
         turnIndicator.textContent = 'Ход: ---';
         nextBtn.disabled = true;
-    }
-
-    function downloadCSV() {
-        if (state.gameLog.length === 0) {
-            alert('Нет данных для скачивания. Сыграйте хотя бы один раунд.');
-            return;
-        }
-
-        let csv = 'Команда,Номер карточки,Миф,Факт,Выбор,Правильно\n';
-        state.gameLog.forEach(log => {
-            const choiceLabel = log.choice === 'myth' ? 'Миф' : 'Факт';
-            const correctLabel = log.isCorrect ? 'Да' : 'Нет';
-            const mythEscaped = log.myth.replace(/"/g, '""');
-            const factEscaped = log.fact.replace(/"/g, '""');
-            csv += `"${log.team}",${log.cardIndex + 1},"${mythEscaped}","${factEscaped}","${choiceLabel}","${correctLabel}"\n`;
-        });
-
-        csv += '\nИтоговая статистика:\n';
-        state.teams.forEach(team => {
-            const s = state.scores[team] || { correct: 0, errors: 0, total: 0 };
-            const pct = s.total > 0 ? Math.round((s.correct / s.total) * 100) : 0;
-            csv += `"${team}","${s.correct}","${s.errors}","${s.total}","${pct}%"\n`;
-        });
-
-        const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
-        const date = new Date().toISOString().slice(0, 19).replace(/[:-]/g, '');
-        link.download = `statistika_mif_fakt_${date}.csv`;
-        link.click();
-        URL.revokeObjectURL(link.href);
     }
 
     // ============================================================
     // ОБРАБОТЧИКИ
     // ============================================================
 
-    // Выбор режима
     modeBtns.forEach(btn => {
         btn.addEventListener('click', function() {
             modeBtns.forEach(b => b.classList.remove('active'));
@@ -865,7 +700,6 @@
     });
     document.getElementById('team2Input').style.display = 'none';
 
-    // Выбор длины
     lengthBtns.forEach(btn => {
         btn.addEventListener('click', function() {
             lengthBtns.forEach(b => b.classList.remove('active'));
@@ -874,38 +708,12 @@
         });
     });
 
-    // Начать игру
     startGameBtn.addEventListener('click', startGame);
-
-    // Кнопки Миф / Факт
     mythBtn.addEventListener('click', function() { handleChoice('myth'); });
     factBtn.addEventListener('click', function() { handleChoice('fact'); });
-
-    // Кнопка Далее
     nextBtn.addEventListener('click', goToNextCard);
-
-    // Сброс
     resetBtn.addEventListener('click', resetGame);
 
-    // Админ-панель: скрыть/показать
-    let adminVisible = true;
-    toggleAdminBtn.addEventListener('click', function() {
-        const table = document.getElementById('adminTable');
-        if (adminVisible) {
-            table.style.display = 'none';
-            this.textContent = 'Показать статистику';
-            adminVisible = false;
-        } else {
-            table.style.display = '';
-            this.textContent = 'Скрыть статистику';
-            adminVisible = true;
-        }
-    });
-
-    // Скачать статистику
-    downloadStatsBtn.addEventListener('click', downloadCSV);
-
-    // Клавиши
     document.addEventListener('keydown', (e) => {
         if (e.key === '1') { if (!mythBtn.disabled) mythBtn.click(); }
         else if (e.key === '2') { if (!factBtn.disabled) factBtn.click(); }
@@ -916,9 +724,6 @@
             }
         }
     });
-
-    // Инициализация
-    updateAdminPanel();
 </script>
 </body>
 </html>
