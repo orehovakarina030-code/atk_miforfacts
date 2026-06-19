@@ -183,7 +183,7 @@
             border-radius: 28px;
             box-shadow: 0 8px 20px rgba(0,0,0,0.05);
             border: 4px solid transparent;
-            transition: transform 0.6s, border-color 0.3s, min-height 0.3s;
+            transition: transform 0.6s, border-color 0.3s, min-height 0.3s, background 0.3s;
             transform-style: preserve-3d;
             position: relative;
             text-align: center;
@@ -191,7 +191,10 @@
         .card.flipped {
             transform: rotateY(180deg);
         }
-        .card-face {
+        .card-front, .card-back {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
             min-height: 200px;
             border-radius: 28px;
@@ -202,27 +205,15 @@
             justify-content: center;
             backface-visibility: hidden;
             -webkit-backface-visibility: hidden;
-            position: absolute;
-            top: 0;
-            left: 0;
-        }
-        .card-front {
-            z-index: 2;
         }
         .card-back {
-            z-index: 1;
+            transform: rotateY(180deg);
             align-items: flex-start;
             justify-content: flex-start;
             overflow-y: auto;
             overflow-x: hidden;
             padding: 30px;
             gap: 15px;
-        }
-         .card.flipped .card-front {
-            z-index: 1;
-        }
-        .card.flipped .card-back {
-            z-index: 2;
         }
         .card-label {
             display: inline-block;
@@ -279,14 +270,23 @@
         }
         .card.border-correct {
             border-color: #1d8b4f !important;
-            background: #d4edda !important;
+        }
+        .card.border-correct .card-front,
+        .card.border-correct .card-back {
+            background: #d4edda;
         }
         .card.border-wrong {
             border-color: #8b0000 !important;
-            background: #fce4e4 !important;
+        }
+        .card.border-wrong .card-front,
+        .card.border-wrong .card-back {
+            background: #fce4e4;
         }
         .card.border-myth {
             border-color: #3d7ea6;
+        }
+        .card.border-myth .card-front,
+        .card.border-myth .card-back {
             background: #d9e6f2;
         }
         .choices {
@@ -524,11 +524,11 @@
         <div class="card-area">
             <div class="card-container">
                 <div class="card border-myth" id="cardDisplay">
-                    <div class="card-face card-front">
+                    <div class="card-front">
                         <div class="card-label" id="cardLabel">Утверждение</div>
                         <div class="card-text" id="cardText">Загружаем...</div>
                     </div>
-                    <div class="card-face card-back">
+                    <div class="card-back">
                         <div class="result-text" id="resultText"></div>
                         <div class="explanation-text" id="explanationText"></div>
                     </div>
