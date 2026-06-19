@@ -20,7 +20,7 @@
             padding: 40px;
             border-radius: 32px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            max-width: 600px;
+            max-width: 800px;
             width: 100%;
             text-align: center;
         }
@@ -53,6 +53,7 @@
 
         .admin-container {
             text-align: left;
+            max-width: 1000px;
         }
         .admin-container h2 {
             color: #1f3b54;
@@ -117,6 +118,26 @@
             text-decoration: none;
         }
         .back-link:hover { text-decoration: underline; }
+        .log-container {
+            max-height: 350px;
+            overflow-y: auto;
+            border: 1px solid #eef2f7;
+            border-radius: 16px;
+            padding: 8px;
+            margin-top: 8px;
+        }
+        .log-container table {
+            font-size: 0.85rem;
+        }
+        .log-container td {
+            max-width: 200px;
+            word-break: break-word;
+        }
+        @media (max-width: 600px) {
+            .login-box, .admin-container { padding: 20px; }
+            .log-container td { max-width: 100px; font-size: 0.75rem; }
+            .admin-table { font-size: 0.8rem; }
+        }
     </style>
 </head>
 <body>
@@ -130,7 +151,7 @@
     <div id="loginError" class="error"></div>
 </div>
 
-<!-- Админ-контент (скрыт до входа) -->
+<!-- Админ-контент -->
 <div id="adminContent" class="admin-container hidden">
     <h2>📊 Статистика игры «Миф / Факт»</h2>
 
@@ -138,6 +159,7 @@
         Данные загружаются...
     </div>
 
+    <h3 style="font-size: 1rem; color: #1f3b54; margin-top: 16px;">📈 Результаты команд</h3>
     <table class="admin-table">
         <thead>
             <tr>
@@ -153,8 +175,8 @@
         </tbody>
     </table>
 
-    <h3 style="margin-top: 24px; font-size: 1rem; color: #1f3b54;">📝 Детальный лог ответов</h3>
-    <div style="max-height: 300px; overflow-y: auto; border: 1px solid #eef2f7; border-radius: 16px; padding: 8px; margin-top: 8px;">
+    <h3 style="font-size: 1rem; color: #1f3b54; margin-top: 24px;">📝 Детальный лог ответов</h3>
+    <div class="log-container">
         <table class="admin-table" id="logTable">
             <thead>
                 <tr>
@@ -181,14 +203,7 @@
 </div>
 
 <script>
-    // ============================================================
-    // ПАРОЛЬ (можно изменить)
-    // ============================================================
-    const ADMIN_PASSWORD = 'maxim26';
-
-    // ============================================================
-    // ФУНКЦИИ
-    // ============================================================
+    const ADMIN_PASSWORD = 'admin2024';
 
     function checkPassword() {
         const password = document.getElementById('passwordInput').value;
@@ -221,7 +236,6 @@
             const seed = data.seed || '—';
             const date = data.date ? new Date(data.date).toLocaleString() : '—';
 
-            // Информация
             document.getElementById('statsInfo').innerHTML = `
                 🗓️ Дата: ${date}<br>
                 🔢 Seed: ${seed}<br>
@@ -229,7 +243,6 @@
                 📝 Всего ответов: ${log.length}
             `;
 
-            // Таблица результатов
             let html = '';
             teams.forEach(team => {
                 const s = scores[team] || { correct: 0, errors: 0, total: 0 };
@@ -249,17 +262,17 @@
             }
             document.getElementById('adminBody').innerHTML = html;
 
-            // Лог ответов
             let logHtml = '';
             log.forEach((item, index) => {
                 const resultText = item.isCorrect ? '✅ Верно' : '❌ Ошибка';
                 const typeLabel = item.type === 'myth' ? 'Миф' : 'Факт';
                 const choiceLabel = item.choice === 'myth' ? 'Миф' : 'Факт';
+                const statement = (item.statement || '—').substring(0, 60) + (item.statement && item.statement.length > 60 ? '…' : '');
                 logHtml += `
                     <tr>
                         <td>${index + 1}</td>
                         <td>${item.team || '—'}</td>
-                        <td style="max-width:200px; word-break:break-word;">${item.statement || '—'}</td>
+                        <td title="${item.statement || '—'}">${statement}</td>
                         <td>${typeLabel}</td>
                         <td>${choiceLabel}</td>
                         <td>${resultText}</td>
@@ -332,15 +345,8 @@
         }
     }
 
-    // ============================================================
-    // ОБРАБОТЧИКИ
-    // ============================================================
-
     document.getElementById('downloadStatsBtn').addEventListener('click', downloadCSV);
     document.getElementById('clearStatsBtn').addEventListener('click', clearStats);
-
-    // Проверяем, есть ли уже статистика при загрузке (если пароль уже введён)
-    // Но пароль вводится вручную
 </script>
 </body>
 </html>
